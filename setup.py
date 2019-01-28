@@ -29,6 +29,6 @@ setup(
     author="Peter Stein",
     author_email="peter.stein@cern.ch",
     packages=find_packages(),
-    install_requires=["seaborn", "pandas", "numpy", "matplotlib"],
+    install_requires=["scipy", "seaborn", "pandas", "numpy", "matplotlib"],
     entry_points={"console_scripts": ["trackerstudies=trackerstudies.main:main"]},
 )

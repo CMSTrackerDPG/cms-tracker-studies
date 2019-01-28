@@ -1,13 +1,14 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+from .algorithms import binned_angular_correlation
 from .extract import (
     extract_tracking_map_content,
     extract_tracking_map_labels,
     extract_tracking_map_title,
 )
 from .load import load_tracking_map
-from .plotutils import plot_matrix
+from .plotutils import plot_matrix, plot_line
 
 
 def plot_tracking_map(run_number, reco, *args, **kwargs):
@@ -38,5 +39,15 @@ def plot_pairs(dataframe, columns=None, *args, **kwargs):
         plt.show()
 
 
-def plot_angular_correleation(matrix, *args, **kwargs):
-    raise NotImplementedError
+def plot_angular_correlation(run_number, reco, *args, **kwargs):
+    tracking_map = load_tracking_map(run_number, reco)
+    matrix = extract_tracking_map_content(tracking_map)
+    bins, correlation = binned_angular_correlation(matrix)
+
+    xlabel = "Binned Two Point Distance"
+    ylabel = "Average Delta Occupancy"
+    title = "Angular correlation"
+
+    plot_line(
+        bins, correlation, xlabel=xlabel, ylabel=ylabel, title=title, *args, **kwargs
+    )
