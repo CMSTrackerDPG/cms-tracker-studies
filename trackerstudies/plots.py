@@ -1,10 +1,13 @@
-from trackerstudies.extract import (
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+from .extract import (
     extract_tracking_map_content,
     extract_tracking_map_labels,
     extract_tracking_map_title,
 )
-from trackerstudies.load import load_tracking_map
-from trackerstudies.plotutils import plot_matrix
+from .load import load_tracking_map
+from .plotutils import plot_matrix
 
 
 def plot_tracking_map(run_number, reco, *args, **kwargs):
@@ -16,7 +19,11 @@ def plot_tracking_map(run_number, reco, *args, **kwargs):
 
 
 def plot_reference_distribution(dataframe, *args, **kwargs):
-    raise NotImplementedError
+    g = sns.FacetGrid(dataframe, col="reco", row="runtype", hue="is_bad")
+    g.map(plt.scatter, "run_number", "reference_run_number", alpha=0.7)
+
+    if kwargs.get("show", False):
+        plt.show()
 
 
 def plot_pairs(dataframe, columns=None, *args, **kwargs):
