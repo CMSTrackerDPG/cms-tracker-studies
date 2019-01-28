@@ -29,6 +29,6 @@ setup(
     author="Peter Stein",
     author_email="peter.stein@cern.ch",
     packages=find_packages(),
-    install_requires=[],
+    install_requires=['numpy', 'matplotlib'],
     entry_points={"console_scripts": ["trackerstudies=trackerstudies.main:main"]},
 )
