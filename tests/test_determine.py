@@ -1,6 +1,6 @@
 import numpy
 
-from trackerstudies.determine import determine_tracker_is_bad, determine_run_type
+from trackerstudies.determine import determine_tracker_is_bad, determine_runtype
 
 
 def test_determine_is_bad():
@@ -19,13 +19,8 @@ def test_determine_is_bad():
 
 
 def test_determine_runtype():
-    assert numpy.isnan(determine_run_type("/Express/Commissioning2018/DQM", "Commissioning18"))
-    assert numpy.isnan(determine_run_type("/Global/Online/ALL", "Commissioning18"))
-
-    assert "cosmics" == determine_run_type("/Express/Cosmics2018/DQM", "Cosmics18")
-    assert "cosmics" == determine_run_type("/Global/Online/ALL", "Cosmics18")
-    assert "cosmics" == determine_run_type("/PromptReco/Cosmics18/DQM", "Cosmics18")
-
-    assert "collisions" == determine_run_type("/Express/Collisions2018/DQM", "Collisions18")
-    assert "collisions" == determine_run_type("/Global/Online/ALL", "Collisions18")
-    assert "collisions" == determine_run_type("/PromptReco/Collisions2018Commiss/DQM", "Collisions18")
+    assert numpy.isnan(determine_runtype("Commissioning18"))
+    assert "cosmics" == determine_runtype("Cosmics18")
+    assert "collisions" == determine_runtype("Collisions18")
+    assert numpy.isnan(determine_runtype("SomethinngCompletelyWrong"))
+    assert "collisions" == determine_runtype("Collisions18SpecialRun")

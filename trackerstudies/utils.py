@@ -1,4 +1,5 @@
 import numpy
+import pandas
 
 from .algorithms import reference_cost
 from .exceptions import TrackingMapNotFound
@@ -21,3 +22,9 @@ def calculate_tracking_map_reference_cost(run_number, reference_run_number, reco
         return numpy.nan
 
     return reference_cost(tracking_map_content, reference_map_content)
+
+
+def setup_pandas_display(max_rows=10, max_columns=10, width=1000):
+    pandas.set_option("display.max_rows", max_rows)
+    pandas.set_option("display.max_columns", max_columns)
+    pandas.set_option("display.width", width)

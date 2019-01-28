@@ -13,19 +13,19 @@ def determine_tracker_is_bad(pixel, strip, tracking, runtype):
         return numpy.nan
 
 
-def determine_is_collisions(run_class_name, rda_name):
-    return "Collisions" in run_class_name or "Collisions" in rda_name
+def determine_is_collisions(run_class_name):
+    return "Collisions" in run_class_name
 
 
-def determine_is_cosmics(run_class_name, rda_name):
-    return "Cosmics" in run_class_name or "Cosmics" in rda_name
+def determine_is_cosmics(run_class_name):
+    return "Cosmics" in run_class_name
 
 
-def determine_run_type(run_class_name, rda_name):
+def determine_runtype(run_class_name):
     return (
         "collisions"
-        if determine_is_collisions(run_class_name, rda_name)
+        if determine_is_collisions(run_class_name)
         else "cosmics"
-        if determine_is_cosmics(run_class_name, rda_name)
+        if determine_is_cosmics(run_class_name)
         else numpy.nan
     )

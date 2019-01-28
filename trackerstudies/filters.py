@@ -12,7 +12,7 @@ def _filter_runtype(dataframe, value):
     try:
         return dataframe[dataframe.runtype == value]
     except AttributeError:
-        dataframe = dataframe.pipe(add_runtype)
+        dataframe.pipe(add_runtype)
         return dataframe[dataframe.runtype == value]
 
 
@@ -69,7 +69,7 @@ def _exclude_runtype(dataframe, value):
     try:
         return dataframe[dataframe.runtype != value]
     except AttributeError:
-        dataframe = dataframe.pipe(add_runtype)
+        dataframe.pipe(add_runtype)
         return dataframe[dataframe.runtype != value]
 
 

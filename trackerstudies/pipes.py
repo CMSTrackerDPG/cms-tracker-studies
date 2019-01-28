@@ -1,4 +1,4 @@
-from .determine import determine_run_type, determine_tracker_is_bad
+from .determine import determine_runtype, determine_tracker_is_bad
 
 
 def _unify_column_names(column_names):
@@ -36,28 +36,17 @@ def unify_values(dataframe):
 def add_runtype(dataframe):
     # Handle obvious cases
     dataframe["runtype"] = dataframe.apply(
-        lambda row: determine_run_type(row.run_class_name, row.rda_name), axis=1
+        lambda row: determine_runtype(row.run_class_name), axis=1
     )
-
-    # Handle missing cases
-    from trackerstudies.filters import filter_collisions, filter_cosmics
-
-    collisions_run_numbers = dataframe.pipe(filter_collisions).run_number.unique()
-    cosmics_run_numbers = dataframe.pipe(filter_cosmics).run_number.unique()
-
-    dataframe.loc[
-        dataframe.run_number.isin(collisions_run_numbers), "runtype"
-    ] = "collisions"
-    dataframe.loc[dataframe.run_number.isin(cosmics_run_numbers), "runtype"] = "cosmics"
-
-    return dataframe
 
 
 def add_is_bad(df):
     if "runtype" not in df:
         add_runtype(df)
     df.loc[:, "is_bad"] = df.apply(
-        lambda row: determine_tracker_is_bad(row.pixel, row.strip, row.tracking, row.runtype),
+        lambda row: determine_tracker_is_bad(
+            row.pixel, row.strip, row.tracking, row.runtype
+        ),
         axis=1,
     )
     return df

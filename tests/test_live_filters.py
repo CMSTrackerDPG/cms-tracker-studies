@@ -11,6 +11,8 @@ from trackerstudies.filters import (
     filter_prompt,
     filter_collisions,
     filter_rereco,
+    filter_cosmics,
+    exclude_cosmics,
 )
 from trackerstudies.load import load_tracker_runs
 
@@ -18,11 +20,33 @@ from trackerstudies.load import load_tracker_runs
 class TestFilter:
     def test_filter_collisions(self):
         runs = load_tracker_runs()
-        values = list(runs.run_type.unique())
-        assert ["Cosmics", "Commissioning", "Collisions"] == values
+        values = list(runs.run_class_name.unique())
+        assert [
+            "Cosmics18",
+            "Commissioning18",
+            "Collisions18",
+            "Collisions18SpecialRun",
+        ] == values
 
         collisions = filter_collisions(runs)
-        assert ["Collisions"] == list(collisions.run_type.unique())
+        assert ["Collisions18", "Collisions18SpecialRun"] == list(
+            collisions.run_class_name.unique()
+        )
+        assert ["collisions"] == list(collisions.runtype.unique())
+
+    def test_filter_cosmics(self):
+        runs = load_tracker_runs()
+        values = list(runs.run_class_name.unique())
+        assert [
+            "Cosmics18",
+            "Commissioning18",
+            "Collisions18",
+            "Collisions18SpecialRun",
+        ] == values
+
+        cosmics = filter_cosmics(runs)
+        assert ["Cosmics18"] == list(cosmics.run_class_name.unique())
+        assert ["cosmics"] == list(cosmics.runtype.unique())
 
     def test_filter_prompt(self):
         runs = load_tracker_runs()
@@ -71,11 +95,33 @@ class TestFilter:
 class TestExclude:
     def test_exclude_collisions(self):
         runs = load_tracker_runs()
-        values = list(runs.run_type.unique())
-        assert ["Cosmics", "Commissioning", "Collisions"] == values
+        values = list(runs.run_class_name.unique())
+        assert [
+            "Cosmics18",
+            "Commissioning18",
+            "Collisions18",
+            "Collisions18SpecialRun",
+        ] == values
 
-        not_collisions = exclude_collisions(runs)
-        assert ["Cosmics", "Commissioning"] == list(not_collisions.run_type.unique())
+        collisions = exclude_collisions(runs)
+        assert ["Cosmics18", "Commissioning18"] == list(
+            collisions.run_class_name.unique()
+        )
+
+    def test_exclude_cosmics(self):
+        runs = load_tracker_runs()
+        values = list(runs.run_class_name.unique())
+        assert [
+            "Cosmics18",
+            "Commissioning18",
+            "Collisions18",
+            "Collisions18SpecialRun",
+        ] == values
+
+        cosmics = exclude_cosmics(runs)
+        assert ["Commissioning18", "Collisions18", "Collisions18SpecialRun"] == list(
+            cosmics.run_class_name.unique()
+        )
 
     def test_exclude_prompt(self):
         runs = load_tracker_runs()
