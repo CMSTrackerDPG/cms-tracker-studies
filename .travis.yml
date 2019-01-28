@@ -13,4 +13,4 @@ install:
 
 script:
   - trackerstudies --help
-  - pytest
+  - pytest --ignore tests/test_live_*
