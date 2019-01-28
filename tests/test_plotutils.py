@@ -2,6 +2,7 @@ import os
 
 import numpy
 
+from tests.conftest import SHOW_PLOTS
 from trackerstudies.plotutils import plot_matrix, plot_line
 
 
@@ -14,7 +15,7 @@ def test_plot_matrix():
         xlabel="A x axis",
         ylabel="Some y axis",
         title="A colored Matrix",
-        show=True,
+        show=SHOW_PLOTS,
         save=file_name,
     )
     assert os.path.isfile(file_name)
@@ -33,7 +34,7 @@ def test_plot_line():
         xlabel="A x axis",
         ylabel="Some y axis",
         title="A Line",
-        show=True,
+        show=SHOW_PLOTS,
         save=file_name,
     )
     assert os.path.isfile(file_name)
