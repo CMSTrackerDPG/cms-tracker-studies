@@ -1,7 +1,7 @@
 #########
 # Filter
 #########
-from trackerstudies.pipes import add_runtype
+from .pipes import add_runtype
 
 
 def _filter_reco(dataframe, value):

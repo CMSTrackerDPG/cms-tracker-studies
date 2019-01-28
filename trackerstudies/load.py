@@ -3,9 +3,9 @@ import os
 
 import pandas
 
-from trackerstudies.exceptions import TrackingMapNotFound
-from trackerstudies.merge import merge_runreg_runreg
-from trackerstudies.pipes import unify_columns, unify_values
+from .exceptions import TrackingMapNotFound
+from .merge import merge_runreg_runreg
+from .pipes import unify_columns, unify_values
 
 DATA_DIRECTORY = "data"
 TRACKING_MAP_DIRECTORY = "TrackEtaPhi_ImpactPoint_GenTk"
