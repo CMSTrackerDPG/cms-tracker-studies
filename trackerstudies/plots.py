@@ -8,7 +8,7 @@ from .extract import (
     extract_tracking_map_title,
 )
 from .load import load_tracking_map
-from .plotutils import plot_matrix, plot_line
+from .plotutils import plot_matrix, plot_line, save_with_default_name
 
 
 def plot_tracking_map(run_number, reco, *args, **kwargs):
@@ -27,6 +27,8 @@ def plot_reference_distribution(dataframe, *args, **kwargs):
     g = sns.FacetGrid(dataframe, col="reco", row="runtype", hue="is_bad")
     g.map(plt.scatter, "run_number", "reference_run_number", alpha=0.7)
 
+    save_with_default_name(kwargs.get("save", False), "reference_distribution.pdf")
+
     if kwargs.get("show", False):
         plt.show()
 
@@ -39,6 +41,9 @@ def plot_pairs(dataframe, columns=None, *args, **kwargs):
     )
 
     sns.pairplot(dataframe[columns])
+
+    save_with_default_name(kwargs.get("save", False), "pair_plot.pdf")
+
     if kwargs.get("show", False):
         plt.show()
 
@@ -50,7 +55,10 @@ def plot_angular_correlation(run_number, reco, *args, **kwargs):
 
     xlabel = "Binned Two Point Distance"
     ylabel = "Average Delta Occupancy"
-    title = "Angular correlation"
+    title = "Angular correlation {} ({})".format(run_number, reco)
+
+    if kwargs.get("save", False) is True:
+        kwargs["save"] = "angular_correlation_{}_{}.pdf".format(run_number, reco)
 
     plot_line(
         bins, correlation, xlabel=xlabel, ylabel=ylabel, title=title, *args, **kwargs

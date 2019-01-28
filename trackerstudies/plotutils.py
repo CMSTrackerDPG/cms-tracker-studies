@@ -22,6 +22,19 @@ def _post_process_plot(title=None, xlabel=None, ylabel=None, show=False, save=No
         plt.ylabel(ylabel)
     if save:
         file_name = save
-        plt.savefig(file_name)
+        save_plot(file_name)
     if show:
         plt.show()
+
+
+def save_plot(file_name):
+    plt.savefig(file_name)
+
+
+def save_with_default_name(save, default):
+    if save:
+        if save is True:
+            file_name = default
+        else:
+            file_name = save
+        save_plot(file_name)

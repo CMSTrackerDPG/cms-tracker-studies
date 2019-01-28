@@ -36,4 +36,4 @@ def test_plot_pairs():
 def test_plot_angular_correlation():
     run_number = 321755
     reco = "Express"
-    plot_angular_correlation(run_number, reco, show=True)
+    plot_angular_correlation(run_number, reco, show=SHOW_PLOTS)
