@@ -1,4 +1,10 @@
-from .determine import determine_runtype, determine_tracker_is_bad
+from .determine import (
+    determine_runtype,
+    determine_tracker_is_bad,
+    determine_is_heavy_ion,
+    determine_is_commissioning,
+    determine_is_special,
+)
 
 
 def _unify_column_names(column_names):
@@ -62,5 +68,37 @@ def add_reference_cost(dataframe):
             row.run_number, row.reference_run_number, row.reco
         ),
         axis=1,
+    )
+    return dataframe
+
+
+def add_is_reference_run(dataframe):
+    raise NotImplementedError
+
+
+def add_is_heavy_ion(dataframe):
+    dataframe.loc[:, "is_heavy_ion"] = dataframe.apply(
+        lambda row: determine_is_heavy_ion(row.rda_name), axis=1
+    )
+    return dataframe
+
+
+def add_is_commissioning(dataframe):
+    dataframe.loc[:, "is_commissioning"] = dataframe.apply(
+        lambda row: determine_is_commissioning(row.run_class_name, row.rda_name), axis=1
+    )
+
+    dataframe.loc[
+        dataframe.run_number.isin(
+            dataframe[dataframe["is_commissioning"]].run_number.unique()
+        ),
+        "is_commissioning",
+    ] = True
+    return dataframe
+
+
+def add_is_special(dataframe):
+    dataframe.loc[:, "is_special"] = dataframe.apply(
+        lambda row: determine_is_special(row.run_class_name, row.rda_name), axis=1
     )
     return dataframe
