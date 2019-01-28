@@ -63,3 +63,13 @@ def plot_angular_correlation(run_number, reco, *args, **kwargs):
     plot_line(
         bins, correlation, xlabel=xlabel, ylabel=ylabel, title=title, *args, **kwargs
     )
+
+
+def plot_reference_cost(dataframe, *args, **kwargs):
+    g = sns.FacetGrid(dataframe, col="reco", row="runtype", hue="is_bad")
+    g = g.map(plt.scatter, "run_number", "reference_cost", alpha=0.7)
+
+    save_with_default_name(kwargs.get("save", False), "reference_cost.pdf")
+
+    if kwargs.get("show", False):
+        plt.show()

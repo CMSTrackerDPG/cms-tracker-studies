@@ -1,10 +1,17 @@
 import numpy
 import pandas
 
+from .merge import merge_runreg_tkdqmdoc, merge_runreg_oms
+from .pipes import add_runtype, add_is_bad, add_reference_cost
 from .algorithms import reference_cost
 from .exceptions import TrackingMapNotFound
 from .extract import extract_tracking_map_content
-from .load import load_tracking_map
+from .load import (
+    load_tracking_map,
+    load_tracker_runs,
+    load_tkdqmdoctor_runs,
+    load_oms_runs,
+)
 
 
 def calculate_tracking_map_reference_cost(run_number, reference_run_number, reco):
@@ -27,3 +34,17 @@ def setup_pandas_display(max_rows=10, max_columns=10, width=1000):
     pandas.set_option("display.max_rows", max_rows)
     pandas.set_option("display.max_columns", max_columns)
     pandas.set_option("display.width", width)
+
+
+def load_fully_setup_tracker_runs():
+    tracker_runs = load_tracker_runs()
+    tkdqmdoctor_runs = load_tkdqmdoctor_runs()
+    oms_runs = load_oms_runs()
+
+    return (
+        tracker_runs.pipe(merge_runreg_tkdqmdoc, tkdqmdoctor_runs)
+        .pipe(merge_runreg_oms, oms_runs)
+        .pipe(add_runtype)
+        .pipe(add_is_bad)
+        .pipe(add_reference_cost)
+    )

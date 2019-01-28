@@ -39,6 +39,8 @@ def add_runtype(dataframe):
         lambda row: determine_runtype(row.run_class_name), axis=1
     )
 
+    return dataframe
+
 
 def add_is_bad(df):
     if "runtype" not in df:

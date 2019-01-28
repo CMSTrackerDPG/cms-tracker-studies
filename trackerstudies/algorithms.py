@@ -60,6 +60,13 @@ def reference_cost(matrix, reference_matrix):
 
 
 def mean_normalize(data):
+    # TODO
+    #  RuntimeWarning: invalid value encountered in true_divide
+    #  RuntimeWarning: invalid value encountered in greater_equal
+    #       keep = (tmp_a >= first_edge)
+    #  RuntimeWarning: invalid value encountered in less_equal
+    #       keep &= (tmp_a <= last_edge)
+
     mean = np.mean(data)
     standard_deviation = np.std(data)
     return np.divide(np.subtract(data, mean), standard_deviation)
