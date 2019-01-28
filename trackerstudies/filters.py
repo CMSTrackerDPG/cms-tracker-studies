@@ -64,6 +64,17 @@ def filter_tracker(dataframe):
     return dataframe[dataframe["workspace"] == "tracker"]
 
 
+def filter_run_number(dataframe, run_number):
+    return dataframe[dataframe["run_number"] == int(run_number)]
+
+
+def filter_run_number_range(dataframe, run_number_from, run_number_to):
+    return dataframe[
+        (dataframe["run_number"] >= int(run_number_from))
+        & (dataframe["run_number"] <= int(run_number_to))
+    ]
+
+
 ##########
 # Exclude
 ##########

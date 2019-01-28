@@ -13,6 +13,7 @@ from trackerstudies.filters import (
     filter_rereco,
     filter_cosmics,
     exclude_cosmics,
+    filter_run_number_range,
 )
 from trackerstudies.load import load_tracker_runs
 
@@ -165,3 +166,22 @@ class TestExclude:
 
         assert not runs.empty
         assert runs[runs["lumisections"] >= 30].empty
+
+
+def test_filter_run_number_range():
+    runs = load_tracker_runs().pipe(filter_run_number_range, 316199, 316216)
+    assert {
+        316199,
+        316200,
+        316201,
+        316202,
+        316204,
+        316205,
+        316207,
+        316208,
+        316209,
+        316210,
+        316213,
+        316214,
+        316216,
+    } == set(runs.run_number.unique())
