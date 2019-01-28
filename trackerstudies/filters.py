@@ -41,15 +41,15 @@ def filter_cosmics(dataframe):
 
 
 def filter_heavy_ion(dataframe):
-    return dataframe[dataframe.heavy_ion]
+    return dataframe[dataframe.is_heavy_ion]
 
 
 def filter_commissioning(dataframe):
-    return dataframe[dataframe.commissioning]
+    return dataframe[dataframe.is_commissioning]
 
 
 def filter_special(dataframe):
-    raise NotImplementedError
+    return dataframe[dataframe.is_special]
 
 
 def filter_lumisections_gte(dataframe, lumisections):
@@ -98,15 +98,15 @@ def exclude_cosmics(dataframe):
 
 
 def exclude_heavy_ion(dataframe):
-    return dataframe[~dataframe.heavy_ion]
+    return dataframe[~dataframe.is_heavy_ion]
 
 
 def exclude_commissioning(dataframe):
-    return dataframe[~dataframe.commissioning]
+    return dataframe[~dataframe.is_commissioning]
 
 
 def exclude_special(dataframe):
-    raise NotImplementedError
+    return dataframe[~dataframe.is_special]
 
 
 def exclude_lumisections_gte(dataframe, lumisections):

@@ -40,8 +40,8 @@ def binned_angular_correlation(matrix):
     return bin_centers, bin_means
 
 
-def angular_correlation_entropy(data):
-    bins, correlations = binned_angular_correlation(data)
+def angular_correlation_entropy(matrix):
+    bins, correlations = binned_angular_correlation(matrix)
     return entropy(correlations)
 
 
