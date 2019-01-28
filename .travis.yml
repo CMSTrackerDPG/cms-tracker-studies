@@ -13,4 +13,4 @@ install:
 
 script:
   - trackerstudies --help
-  - pytest tests/test_plotutils.py
+  - pytest tests/test_plotutils.py tests/test_determine.py

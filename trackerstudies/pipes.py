@@ -1,4 +1,4 @@
-import numpy
+from .determine import determine_run_type, determine_tracker_is_bad
 
 
 def _unify_column_names(column_names):
@@ -33,17 +33,11 @@ def unify_values(dataframe):
     return dataframe
 
 
-def determine_run_type(row):
-    if "Collisions" in row["run_class_name"] or "Collisions" in row["rda_name"]:
-        return "collisions"
-    if "Cosmics" in row["run_class_name"] or "Cosmics" in row["rda_name"]:
-        return "cosmics"
-    return numpy.nan
-
-
 def add_runtype(dataframe):
     # Handle obvious cases
-    dataframe["runtype"] = dataframe.apply(determine_run_type, axis=1)
+    dataframe["runtype"] = dataframe.apply(
+        lambda row: determine_run_type(row.run_class_name, row.rda_name), axis=1
+    )
 
     # Handle missing cases
     from trackerstudies.filters import filter_collisions, filter_cosmics
@@ -56,4 +50,26 @@ def add_runtype(dataframe):
     ] = "collisions"
     dataframe.loc[dataframe.run_number.isin(cosmics_run_numbers), "runtype"] = "cosmics"
 
+    return dataframe
+
+
+def add_is_bad(df):
+    if "runtype" not in df:
+        add_runtype(df)
+    df.loc[:, "is_bad"] = df.apply(
+        lambda row: determine_tracker_is_bad(row.pixel, row.strip, row.tracking, row.runtype),
+        axis=1,
+    )
+    return df
+
+
+def add_reference_cost(dataframe):
+    from .utils import calculate_tracking_map_reference_cost
+
+    dataframe.loc[:, "cost"] = dataframe.apply(
+        lambda row: calculate_tracking_map_reference_cost(
+            row.run_number, row.reference_run_number, row.reco
+        ),
+        axis=1,
+    )
     return dataframe
