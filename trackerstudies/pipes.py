@@ -55,7 +55,7 @@ def add_is_bad(df):
 def add_reference_cost(dataframe):
     from .utils import calculate_tracking_map_reference_cost
 
-    dataframe.loc[:, "cost"] = dataframe.apply(
+    dataframe.loc[:, "reference_cost"] = dataframe.apply(
         lambda row: calculate_tracking_map_reference_cost(
             row.run_number, row.reference_run_number, row.reco
         ),

@@ -8,12 +8,9 @@ from .load import load_tracking_map
 
 
 def calculate_tracking_map_reference_cost(run_number, reference_run_number, reco):
-    tracking_map = load_tracking_map(run_number, reco)
-    reference_map = load_tracking_map(reference_run_number, reco)
-
     try:
-        tracking_map_content = extract_tracking_map_content(tracking_map)
-        reference_map_content = extract_tracking_map_content(reference_map)
+        tracking_map = load_tracking_map(run_number, reco)
+        reference_map = load_tracking_map(reference_run_number, reco)
     except TrackingMapNotFound:
         # print("Cant find tracking map for {} {} ".format(row.run_number, row.reco))
         return numpy.nan
@@ -21,6 +18,8 @@ def calculate_tracking_map_reference_cost(run_number, reference_run_number, reco
         # print("Incompatible Map for {} {} ".format(row.run_number, row.reco))
         return numpy.nan
 
+    tracking_map_content = extract_tracking_map_content(tracking_map)
+    reference_map_content = extract_tracking_map_content(reference_map)
     return reference_cost(tracking_map_content, reference_map_content)
 
 

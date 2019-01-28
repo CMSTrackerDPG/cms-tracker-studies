@@ -52,7 +52,11 @@ def entropy(data):
 def reference_cost(matrix, reference_matrix):
     matrix_normalized = mean_normalize(matrix)
     reference_matrix_normalized = mean_normalize(reference_matrix)
-    return mean_squared_error(matrix_normalized, reference_matrix_normalized)
+    try:
+        return mean_squared_error(matrix_normalized, reference_matrix_normalized)
+    except ValueError:
+        # Incompatible matrices
+        return np.nan
 
 
 def mean_normalize(data):
