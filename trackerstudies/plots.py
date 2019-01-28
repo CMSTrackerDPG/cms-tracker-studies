@@ -27,7 +27,15 @@ def plot_reference_distribution(dataframe, *args, **kwargs):
 
 
 def plot_pairs(dataframe, columns=None, *args, **kwargs):
-    raise NotImplementedError
+    columns = (
+        columns
+        if columns
+        else ["run_number", "lhc_fill", "lumisections", "run_lumi", "run_live_lumi"]
+    )
+
+    sns.pairplot(dataframe[columns])
+    if kwargs.get("show", False):
+        plt.show()
 
 
 def plot_angular_correleation(matrix, *args, **kwargs):
