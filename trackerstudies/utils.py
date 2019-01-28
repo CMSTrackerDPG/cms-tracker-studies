@@ -5,7 +5,8 @@ from trackerstudies.filters import (
     exclude_online,
     exclude_commissioning,
     exclude_special,
-    exclude_open)
+    exclude_open,
+)
 from .merge import merge_runreg_tkdqmdoc, merge_runreg_oms, merge_runreg_runreg
 from .pipes import (
     add_runtype,
@@ -23,7 +24,8 @@ from .load import (
     load_tracker_runs,
     load_tkdqmdoctor_runs,
     load_oms_runs,
-    load_global_runs)
+    load_global_runs,
+)
 
 
 def calculate_tracking_map_reference_cost(run_number, reference_run_number, reco):
@@ -51,13 +53,13 @@ def setup_pandas_display(max_rows=10, max_columns=10, width=1000):
 def apply_everything(dataframe):
     return (
         dataframe.pipe(add_runtype)
-            .pipe(add_is_bad)
-            .pipe(add_reference_cost)
-            .pipe(add_is_special)
-            .pipe(add_is_commissioning)
-            .pipe(add_is_heavy_ion)
-            .pipe(exclude_commissioning)
-            .pipe(exclude_special)
+        .pipe(add_is_bad)
+        .pipe(add_reference_cost)
+        .pipe(add_is_special)
+        .pipe(add_is_commissioning)
+        .pipe(add_is_heavy_ion)
+        .pipe(exclude_commissioning)
+        .pipe(exclude_special)
     )
 
 
@@ -68,10 +70,10 @@ def load_fully_setup_tracker_runs():
 
     return (
         tracker_runs.pipe(merge_runreg_tkdqmdoc, tkdqmdoctor_runs)
-            .pipe(merge_runreg_oms, oms_runs)
-            .pipe(exclude_online)
-            .pipe(exclude_open)
-            .pipe(apply_everything)
+        .pipe(merge_runreg_oms, oms_runs)
+        .pipe(exclude_online)
+        .pipe(exclude_open)
+        .pipe(apply_everything)
     )
 
 
@@ -82,11 +84,14 @@ def load_fully_setup_global_runs():
 
     return (
         global_runs.pipe(merge_runreg_tkdqmdoc, tkdqmdoctor_runs)
-            .pipe(merge_runreg_oms, oms_runs)
-            .pipe(exclude_online)
-            .pipe(exclude_open)
-            .pipe(apply_everything)
+        .pipe(merge_runreg_oms, oms_runs)
+        .pipe(exclude_online)
+        .pipe(exclude_open)
+        .pipe(apply_everything)
     )
 
+
 def load_all_workspaces_full_setup():
-    return merge_runreg_runreg(load_fully_setup_tracker_runs(), load_fully_setup_global_runs())
+    return merge_runreg_runreg(
+        load_fully_setup_tracker_runs(), load_fully_setup_global_runs()
+    )
