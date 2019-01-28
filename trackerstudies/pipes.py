@@ -73,6 +73,15 @@ def add_reference_cost(dataframe):
     return dataframe
 
 
+def add_angular_entropy(dataframe):
+    from .utils import calculate_angular_entropy
+
+    dataframe.loc[:, "angular_entropy"] = dataframe.apply(
+        lambda row: calculate_angular_entropy(row.run_number, row.reco), axis=1
+    )
+    return dataframe
+
+
 def add_is_reference_run(dataframe):
     raise NotImplementedError
 

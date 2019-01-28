@@ -73,3 +73,13 @@ def plot_reference_cost(dataframe, *args, **kwargs):
 
     if kwargs.get("show", False):
         plt.show()
+
+
+def plot_angular_entropy(dataframe, *args, **kwargs):
+    g = sns.FacetGrid(dataframe, col="reco", row="runtype", hue="is_bad")
+    g.map(plt.scatter, "run_number", "angular_entropy", alpha=0.7)
+
+    save_with_default_name(kwargs.get("save", False), "angular_entropy.pdf")
+
+    if kwargs.get("show", False):
+        plt.show()
