@@ -82,6 +82,7 @@ def load_tkdqmdoctor_runs_json(filename):
         }
     )
     runs.reco = runs.reco.str.lower()
+    runs.reference_run_number = runs.reference_run_number.astype(pandas.Int64Dtype())
     return runs
 
 
