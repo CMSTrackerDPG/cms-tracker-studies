@@ -16,6 +16,10 @@ def plot_tracking_map(run_number, reco, *args, **kwargs):
     matrix = extract_tracking_map_content(tracking_map)
     xlabel, ylabel = extract_tracking_map_labels(tracking_map)
     title = extract_tracking_map_title(tracking_map)
+
+    if kwargs.get("save", False) is True:
+        kwargs["save"] = "tracking_map_{}_{}.pdf".format(run_number, reco)
+
     plot_matrix(matrix, xlabel=xlabel, ylabel=ylabel, title=title, *args, **kwargs)
 
 
