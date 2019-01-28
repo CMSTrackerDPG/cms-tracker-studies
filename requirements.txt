@@ -1,0 +1,4 @@
+git+https://github.com/ptrstn/dqmcrawlr
+git+https://github.com/ptrstn/runregcrawlr
+git+https://github.com/ptrstn/wbmcrawlr
+git+https://github.com/ptrstn/twikirefs
