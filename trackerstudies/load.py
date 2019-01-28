@@ -4,6 +4,7 @@ import os
 import pandas
 
 from trackerstudies.exceptions import TrackingMapNotFound
+from trackerstudies.merge import merge_runreg_runreg
 from trackerstudies.pipes import unify_columns, unify_values
 
 DATA_DIRECTORY = "data"
@@ -54,7 +55,9 @@ def load_global_runs():
 
 
 def load_all_runreg_runs():
-    raise NotImplementedError
+    tracker_runs = load_tracker_runs()
+    global_runs = load_global_runs()
+    return merge_runreg_runreg(tracker_runs, global_runs)
 
 
 def load_oms_json():

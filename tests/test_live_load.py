@@ -8,6 +8,7 @@ from trackerstudies.load import (
     load_oms_runs,
     load_tkdqmdoctor_runs,
     load_tkdqmdoc_problematic_runs,
+    load_all_runreg_runs,
 )
 
 
@@ -50,7 +51,15 @@ class TestRunRegistry:
         assert "csc" in runs
 
     def test_load_all_runreg_runs(self):
-        pass
+        tracker_runs = load_tracker_runs()
+        global_runs = load_global_runs()
+        all_runs = load_all_runreg_runs()
+        assert len(all_runs) == len(tracker_runs) + len(
+            global_runs
+        ), "Increased line count"
+        assert len(list(all_runs)) == max(
+            len(list(tracker_runs)), len(list(global_runs))
+        ), "Maximum column count"
 
 
 class TestOMS:
