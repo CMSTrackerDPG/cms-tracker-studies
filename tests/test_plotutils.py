@@ -2,7 +2,7 @@ import os
 
 import numpy
 
-from trackerstudies.plots import plot_matrix, plot_line
+from trackerstudies.plotutils import plot_matrix, plot_line
 
 
 def test_plot_matrix():
