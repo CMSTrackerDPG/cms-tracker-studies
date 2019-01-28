@@ -35,6 +35,7 @@ def unify_columns(data_frame):
 
 def unify_values(dataframe):
     dataframe.reco = dataframe.reco.str.lower()
+    dataframe.workspace = dataframe.workspace.str.lower()
     dataframe["reco"] = dataframe["reco"].replace(regex="promptreco", value="prompt")
     return dataframe
 

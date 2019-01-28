@@ -56,6 +56,13 @@ def filter_lumisections_gte(dataframe, lumisections):
     return dataframe[dataframe["lumisections"] > lumisections]
 
 
+def filter_global(dataframe):
+    return dataframe[dataframe["workspace"] == 'global']
+
+
+def filter_tracker(dataframe):
+    return dataframe[dataframe["workspace"] == 'tracker']
+
 ##########
 # Exclude
 ##########
@@ -111,3 +118,15 @@ def exclude_special(dataframe):
 
 def exclude_lumisections_gte(dataframe, lumisections):
     return dataframe[dataframe["lumisections"] < lumisections]
+
+
+def exclude_open(dataframe):
+    return dataframe[dataframe["rda_state"] != 'OPEN']
+
+
+def exclude_global(dataframe):
+    return dataframe[dataframe["workspace"] != 'global']
+
+
+def exclude_tracker(dataframe):
+    return dataframe[dataframe["workspace"] != 'tracker']
