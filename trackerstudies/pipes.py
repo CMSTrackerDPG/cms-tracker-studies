@@ -74,11 +74,19 @@ def add_reference_cost(dataframe):
 
 
 def add_angular_entropy(dataframe):
-    from .utils import calculate_angular_entropy
+    from trackerstudies.utils import (
+        get_entropy_cache,
+        save_entropy_cache,
+        get_angular_entropy,
+    )
+
+    entropy_cache = get_entropy_cache()
 
     dataframe.loc[:, "angular_entropy"] = dataframe.apply(
-        lambda row: calculate_angular_entropy(row.run_number, row.reco), axis=1
+        lambda row: get_angular_entropy(row.run_number, row.reco, entropy_cache), axis=1
     )
+
+    save_entropy_cache(entropy_cache)
     return dataframe
 
 

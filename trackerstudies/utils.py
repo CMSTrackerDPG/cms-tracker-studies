@@ -1,3 +1,5 @@
+import os
+
 import numpy
 import pandas
 
@@ -7,6 +9,7 @@ from trackerstudies.filters import (
     exclude_special,
     exclude_open,
 )
+from trackerstudies.settings import ENTROPY_CACHE_NAME
 from .merge import merge_runreg_tkdqmdoc, merge_runreg_oms, merge_runreg_runreg
 from .pipes import (
     add_runtype,
@@ -45,7 +48,13 @@ def calculate_tracking_map_reference_cost(run_number, reference_run_number, reco
 
 
 def calculate_angular_entropy(run_number, reco):
-    print("Calculating angular tracking map entropy for '{}' ({})...".format(run_number, reco), end="", flush=True)
+    print(
+        "Calculating angular tracking map entropy for '{}' ({})...".format(
+            run_number, reco
+        ),
+        end="",
+        flush=True,
+    )
     try:
         tracking_map = load_tracking_map(run_number, reco)
     except TrackingMapNotFound:
@@ -96,6 +105,11 @@ def load_fully_setup_tracker_runs():
     )
 
 
+def load_tracking_map_content(run_number, reco):
+    tracking_map = load_tracking_map(run_number, reco)
+    return extract_tracking_map_content(tracking_map)
+
+
 def load_fully_setup_global_runs():
     global_runs = load_global_runs()
     tkdqmdoctor_runs = load_tkdqmdoctor_runs()
@@ -114,3 +128,24 @@ def load_all_workspaces_full_setup():
     return merge_runreg_runreg(
         load_fully_setup_tracker_runs(), load_fully_setup_global_runs()
     )
+
+
+def get_entropy_cache():
+    return (
+        pandas.read_pickle(ENTROPY_CACHE_NAME)
+        if os.path.isfile(ENTROPY_CACHE_NAME)
+        else pandas.DataFrame(columns=["run_number", "reco", 'angular_entropy']).set_index(["run_number", "reco"])
+    )
+
+
+def save_entropy_cache(dataframe):
+    dataframe.to_pickle(ENTROPY_CACHE_NAME)
+
+
+def get_angular_entropy(run_number, reco, entropy_cache=None):
+    try:
+        return entropy_cache.loc[(run_number, reco), "angular_entropy"]
+    except KeyError:
+        entropy = calculate_angular_entropy(run_number, reco)
+        entropy_cache.loc[(run_number, reco), "angular_entropy"] = entropy
+        return entropy
