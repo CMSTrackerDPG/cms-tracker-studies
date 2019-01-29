@@ -74,3 +74,15 @@ def mean_normalize(data):
 
 def mean_squared_error(x, y):
     return ((x - y) ** 2).mean() / 2
+
+
+def calculate_best_fit_scale(X, Y):
+    """
+    Requires that at least half of X is similar to Y
+
+    :param X: Matrix X
+    :param Y: Refrence Matrix Y
+    :return: best factor to scale X to Y
+    """
+    ratios = np.divide(Y, X)
+    return np.median(ratios)
