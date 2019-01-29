@@ -1,6 +1,8 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
+import numpy as np
 
+from trackerstudies.utils import load_tracking_map_content
 from .algorithms import binned_angular_correlation
 from .extract import (
     extract_tracking_map_content,
@@ -8,7 +10,7 @@ from .extract import (
     extract_tracking_map_title,
 )
 from .load import load_tracking_map
-from .plotutils import plot_matrix, plot_line, save_with_default_name
+from .plotutils import plot_matrix, plot_line, save_with_default_name, plot_histogram
 
 
 def plot_tracking_map(run_number, reco, *args, **kwargs):
@@ -83,3 +85,16 @@ def plot_angular_entropy(dataframe, *args, **kwargs):
 
     if kwargs.get("show", False):
         plt.show()
+
+
+def plot_referenced_tracking_map_histogram(
+    run_number, reference_run_number, reco, *args, **kwargs
+):
+    tk_map = load_tracking_map_content(run_number, reco)
+    reference_map = load_tracking_map_content(reference_run_number, reco)
+    ratios = np.divide(tk_map, reference_map)
+    title = "{} vs {} ({})".format(run_number, reference_run_number, reco)
+    if kwargs.get("title", None):
+        title = "{}\n{}".format(title, kwargs.pop("title"))
+
+    plot_histogram(ratios, title=title, *args, **kwargs)

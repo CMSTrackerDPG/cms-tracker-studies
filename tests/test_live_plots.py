@@ -25,6 +25,7 @@ from trackerstudies.plots import (
     plot_angular_correlation,
     plot_reference_cost,
     plot_angular_entropy,
+    plot_referenced_tracking_map_histogram,
 )
 from trackerstudies.utils import load_fully_setup_tracker_runs
 
@@ -79,3 +80,12 @@ def test_plot_angular_entropy():
     )
 
     plot_angular_entropy(runs, show=SHOW_PLOTS, save=SHOW_PLOTS)
+
+
+def test_plot_referenced_tracking_map_histogram():
+    run_number = 317512
+    reference_run_number = 317435
+    reco = "Prompt"
+    plot_referenced_tracking_map_histogram(
+        run_number, reference_run_number, reco, show=SHOW_PLOTS
+    )

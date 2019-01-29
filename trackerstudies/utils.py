@@ -134,7 +134,9 @@ def get_entropy_cache():
     return (
         pandas.read_pickle(ENTROPY_CACHE_NAME)
         if os.path.isfile(ENTROPY_CACHE_NAME)
-        else pandas.DataFrame(columns=["run_number", "reco", 'angular_entropy']).set_index(["run_number", "reco"])
+        else pandas.DataFrame(
+            columns=["run_number", "reco", "angular_entropy"]
+        ).set_index(["run_number", "reco"])
     )
 
 

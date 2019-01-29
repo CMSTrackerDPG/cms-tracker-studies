@@ -13,6 +13,12 @@ def plot_line(x, y, *args, **kwargs):
     _post_process_plot(*args, **kwargs)
 
 
+def plot_histogram(x, bins=10, *args, **kwargs):
+    fig, ax = plt.subplots()
+    plt.hist(x, bins, facecolor="blue")
+    _post_process_plot(*args, **kwargs)
+
+
 def _post_process_plot(title=None, xlabel=None, ylabel=None, show=False, save=None):
     if title:
         plt.title(title)
