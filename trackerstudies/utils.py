@@ -45,17 +45,22 @@ def calculate_tracking_map_reference_cost(run_number, reference_run_number, reco
 
 
 def calculate_angular_entropy(run_number, reco):
+    print("Calculating angular tracking map entropy for '{}' ({})...".format(run_number, reco), end="", flush=True)
     try:
         tracking_map = load_tracking_map(run_number, reco)
     except TrackingMapNotFound:
         # print("Cant find tracking map for {} {} ".format(row.run_number, row.reco))
+        print("Failed")
         return numpy.nan
     except ValueError:
         # print("Incompatible Map for {} {} ".format(row.run_number, row.reco))
+        print("Failed")
         return numpy.nan
 
     tracking_map_content = extract_tracking_map_content(tracking_map)
-    return angular_correlation_entropy(tracking_map_content)
+    entropy = angular_correlation_entropy(tracking_map_content)
+    print("OK")
+    return entropy
 
 
 def setup_pandas_display(max_rows=10, max_columns=10, width=1000):
