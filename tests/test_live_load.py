@@ -7,7 +7,7 @@ from trackerstudies.load import (
     load_tracking_map,
     load_oms_runs,
     load_tkdqmdoctor_runs,
-    load_tkdqmdoc_problematic_runs,
+    load_tkdqmdoctor_problem_runs,
     load_all_runreg_runs,
 )
 
@@ -79,6 +79,6 @@ class TestTkDQMDoctor:
         assert len(runs) <= 4000
 
     def test_load_tkdqmdoc_problematic_runs(self):
-        runs = load_tkdqmdoc_problematic_runs()
+        runs = load_tkdqmdoctor_problem_runs()
         assert len(runs) >= 199
         assert len(runs) <= 300

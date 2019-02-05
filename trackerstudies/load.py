@@ -87,12 +87,12 @@ def load_tkdqmdoctor_runs_json(filename):
 
 
 def load_tkdqmdoctor_runs():
-    filename = "tkdqmdoc.json"
+    filename = "tkdqmdoctor_runs.json"
     path = os.path.join(DATA_DIRECTORY, filename)
     return load_tkdqmdoctor_runs_json(path)
 
 
-def load_tkdqmdoc_problematic_runs():
-    filename = "tkdqmdoctor_problems.json"
+def load_tkdqmdoctor_problem_runs():
+    filename = "tkdqmdoctor_problem_runs.json"
     path = os.path.join(DATA_DIRECTORY, filename)
     return load_tkdqmdoctor_runs_json(path)
