@@ -26,7 +26,7 @@ def plot_3d_matrix(matrix, *args, **kwargs):
     surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 
     fig.colorbar(surf, shrink=0.5, aspect=5)
-
+    ax.view_init(kwargs.pop("elev", None), kwargs.pop("azim", None))
     _post_process_plot(*args, **kwargs)
 
 

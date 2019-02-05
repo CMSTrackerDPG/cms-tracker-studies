@@ -10,19 +10,59 @@ from .extract import (
     extract_tracking_map_title,
 )
 from .load import load_tracking_map
-from .plotutils import plot_matrix, plot_line, save_with_default_name, plot_histogram
+from .plotutils import (
+    plot_matrix,
+    plot_line,
+    save_with_default_name,
+    plot_histogram,
+    plot_3d_matrix,
+)
 
 
 def plot_tracking_map(run_number, reco, *args, **kwargs):
     tracking_map = load_tracking_map(run_number, reco)
     matrix = extract_tracking_map_content(tracking_map)
     xlabel, ylabel = extract_tracking_map_labels(tracking_map)
-    title = extract_tracking_map_title(tracking_map)
+    title = "{}\n{} ({})".format(
+        extract_tracking_map_title(tracking_map), run_number, reco
+    )
 
     if kwargs.get("save", False) is True:
         kwargs["save"] = "tracking_map_{}_{}.pdf".format(run_number, reco)
 
     plot_matrix(matrix, xlabel=xlabel, ylabel=ylabel, title=title, *args, **kwargs)
+
+
+def plot_tracking_map_3d(run_number, reco, *args, **kwargs):
+    tracking_map = load_tracking_map(run_number, reco)
+    matrix = extract_tracking_map_content(tracking_map)
+    xlabel, ylabel = extract_tracking_map_labels(tracking_map)
+    title = "{}\n{} ({})".format(
+        extract_tracking_map_title(tracking_map), run_number, reco
+    )
+
+    if kwargs.get("save", False) is True:
+        kwargs["save"] = "tracking_map_3d_{}_{}.pdf".format(run_number, reco)
+
+    plot_3d_matrix(matrix, xlabel=xlabel, ylabel=ylabel, title=title, *args, **kwargs)
+
+
+def plot_tracking_map_line(run_number, reco, *args, **kwargs):
+    tracking_map = load_tracking_map(run_number, reco)
+    matrix = extract_tracking_map_content(tracking_map)
+    xlabel, ylabel = extract_tracking_map_labels(tracking_map)
+    title = "{}\n{} ({})".format(
+        extract_tracking_map_title(tracking_map), run_number, reco
+    )
+
+    matrix = np.transpose(matrix)
+    y = np.reshape(matrix, matrix.size)
+    x = np.arange(0, matrix.size)
+
+    if kwargs.get("save", False) is True:
+        kwargs["save"] = "tracking_map_line_{}_{}.pdf".format(run_number, reco)
+
+    plot_line(x, y, xlabel=xlabel, ylabel=ylabel, title=title, *args, **kwargs)
 
 
 def plot_reference_distribution(dataframe, *args, **kwargs):

@@ -26,6 +26,8 @@ from trackerstudies.plots import (
     plot_reference_cost,
     plot_angular_entropy,
     plot_referenced_tracking_map_histogram,
+    plot_tracking_map_line,
+    plot_tracking_map_3d,
 )
 from trackerstudies.utils import load_fully_setup_tracker_runs
 
@@ -34,6 +36,27 @@ def test_plot_tracking_map():
     run_number = 321755
     reco = "Express"
     plot_tracking_map(run_number, reco, show=SHOW_PLOTS)
+
+
+def test_plot_tracking_map_3d():
+    run_number = 317512
+    reference_run_number = 317435
+    reco = "Express"
+    plot_tracking_map_3d(run_number, reco, show=SHOW_PLOTS)
+    plot_tracking_map_3d(reference_run_number, reco, show=SHOW_PLOTS)
+    plot_tracking_map_3d(run_number, reco, elev=65, azim=35, show=SHOW_PLOTS)
+    plot_tracking_map_3d(reference_run_number, reco, elev=65, azim=35, show=SHOW_PLOTS)
+
+
+def test_plot_tracking_map_line():
+    run_number = 321755
+    reco = "Express"
+    plot_tracking_map_line(run_number, reco, show=SHOW_PLOTS)
+    plot_tracking_map_line(317512, "Prompt", show=SHOW_PLOTS)
+    plot_tracking_map_line(317435, "Prompt", show=SHOW_PLOTS)
+    plot_tracking_map_line(321755, "Prompt", show=SHOW_PLOTS)
+    plot_tracking_map_line(322483, "Prompt", show=SHOW_PLOTS)
+    plot_tracking_map_line(322492, "Prompt", show=SHOW_PLOTS)
 
 
 def test_plot_reference_distribution():
