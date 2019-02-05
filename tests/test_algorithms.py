@@ -5,7 +5,8 @@ import numpy
 from trackerstudies.algorithms import (
     reference_cost,
     scaled_reference_cost,
-    most_common_scale)
+    most_common_scale,
+)
 
 
 def test_reference_cost():

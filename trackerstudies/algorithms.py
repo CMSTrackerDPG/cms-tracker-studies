@@ -120,6 +120,8 @@ def most_common_scale(matrix, reference_matrix):
     if biggest_bin_index + 1 == len(hist):
         upper_border += 1
 
-    values = ratios_vector[(ratios_vector >= lower_border) & (ratios_vector < upper_border)]
+    values = ratios_vector[
+        (ratios_vector >= lower_border) & (ratios_vector < upper_border)
+    ]
 
     return np.median(values)
