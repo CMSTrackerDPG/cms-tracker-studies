@@ -1,9 +1,32 @@
 import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib import cm
+
+# noinspection PyUnresolvedReferences
+from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 
 
 def plot_matrix(matrix, *args, **kwargs):
     fig, ax = plt.subplots()
     plt.imshow(matrix)
+    _post_process_plot(*args, **kwargs)
+
+
+def plot_3d_matrix(matrix, *args, **kwargs):
+    fig = plt.figure()
+    ax = fig.gca(projection="3d")
+
+    Z = np.array(matrix)
+    line_count, column_count = Z.shape
+
+    X = np.arange(0, column_count, 1)
+    Y = np.arange(0, line_count, 1)
+    X, Y = np.meshgrid(X, Y)
+
+    surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+
+    fig.colorbar(surf, shrink=0.5, aspect=5)
+
     _post_process_plot(*args, **kwargs)
 
 
