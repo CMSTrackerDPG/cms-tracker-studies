@@ -49,7 +49,29 @@ def entropy(data):
     return stats.entropy(data)
 
 
+def scaled_reference_cost(matrix, reference_matrix):
+    scale_factor = most_common_scale(matrix, reference_matrix)
+    if np.isnan(scale_factor):
+        return np.inf
+
+    matrix_scaled = matrix * scale_factor
+
+    reference_mean = reference_matrix.mean()
+    reference_std = reference_matrix.std()
+
+    matrix_normalized = np.divide(
+        np.subtract(matrix_scaled, reference_mean), reference_std
+    )
+    reference_normalized = np.divide(
+        np.subtract(reference_matrix, reference_mean), reference_std
+    )
+
+    return mean_squared_error(matrix_normalized, reference_normalized)
+
+
 def reference_cost(matrix, reference_matrix):
+    if not np.any(matrix) or not np.any(reference_matrix):
+        return np.inf
     matrix_normalized = mean_normalize(matrix)
     reference_matrix_normalized = mean_normalize(reference_matrix)
     try:
@@ -76,13 +98,28 @@ def mean_squared_error(x, y):
     return ((x - y) ** 2).mean() / 2
 
 
-def calculate_best_fit_scale(X, Y):
+def most_common_scale(matrix, reference_matrix):
     """
-    Requires that at least half of X is similar to Y
+    :return: most common scale factor to scale matrix to reference_matrix
+    """
+    ratios = np.divide(reference_matrix, matrix)
+    ratios_vector = np.reshape(ratios, ratios.size)
+    ratios_vector = ratios_vector[(ratios_vector < np.inf) & (ratios_vector > np.NINF)]
+    if ratios_vector.size == 0:
+        return np.nan
 
-    :param X: Matrix X
-    :param Y: Refrence Matrix Y
-    :return: best factor to scale X to Y
-    """
-    ratios = np.divide(Y, X)
-    return np.median(ratios)
+    # Put all elements in bins
+    hist, bin_edges = np.histogram(ratios_vector)
+
+    # Choose bin with biggest count
+    biggest_bin_index = np.argmax(hist)
+
+    lower_border = bin_edges[biggest_bin_index]
+    upper_border = bin_edges[biggest_bin_index + 1]
+
+    if biggest_bin_index + 1 == len(hist):
+        upper_border += 1
+
+    values = ratios_vector[(ratios_vector >= lower_border) & (ratios_vector < upper_border)]
+
+    return np.median(values)
