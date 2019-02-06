@@ -53,7 +53,7 @@ def test_merge_runreg_oms():
     ), "Increased Column count"
 
 
-def test_merge_runreg_oms():
+def test_merge_runreg_tkdqmdoctor_runs():
     tracker_runs = load_tracker_runs()
     tkdqm = load_tkdqmdoctor_runs()
 
@@ -66,4 +66,4 @@ def test_merge_runreg_oms():
     merged_column_count = len(list(merged))
 
     assert len(tracker_runs) == tracker_size, "No Change in Line count"
-    assert tracker_column_count + 1 == merged_column_count, "Increased Column count"
+    assert tracker_column_count + 6 == merged_column_count, "Increased Column count"

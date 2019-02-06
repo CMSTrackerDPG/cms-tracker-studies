@@ -15,7 +15,18 @@ def merge_runreg_oms(runreg_dataframe, oms_dataframe):
 
 def merge_runreg_tkdqmdoc(runreg_dataframe, tkdqmdoc_dataframe):
     rr = runreg_dataframe.set_index(["run_number", "reco"])
-    tkdqm = tkdqmdoc_dataframe[["run_number", "reco", "reference_run_number"]]
+    tkdqm = tkdqmdoc_dataframe[
+        [
+            "run_number",
+            "reco",
+            "dataset",
+            "reference_run_number",
+            "reference_reco",
+            "reference_runtype",
+            "reference_dataset",
+            "comment",
+        ]
+    ]
     tkdqm = tkdqm.set_index(["run_number", "reco"])
 
     # Remove Duplicates

@@ -78,7 +78,16 @@ def load_tkdqmdoctor_runs_json(filename):
     runs = load_json_as_pandas(filename).rename(
         columns={
             "type__reco": "reco",
+            "type__beamtype": "beamtype",
+            "type__beamenergy": "beamenergy",
+            "type__dataset": "dataset",
             "reference_run__reference_run": "reference_run_number",
+            "reference_run__reco": "reference_reco",
+            "reference_run__runtype": "reference_runtype",
+            "reference_run__beamtype": "reference_beamtype",
+            "reference_run__beamenergy": "reference_beamenergy",
+            "reference_run__dataset": "reference_dataset",
+            "data": "certification_date",
         }
     )
     runs.reco = runs.reco.str.lower()
