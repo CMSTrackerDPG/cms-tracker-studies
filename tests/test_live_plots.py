@@ -28,8 +28,14 @@ from trackerstudies.plots import (
     plot_referenced_tracking_map_histogram,
     plot_tracking_map_line,
     plot_tracking_map_3d,
+    plot_reference_subtracted_tracking_map,
+    plot_reference_subtracted_tracking_map_3d,
+    plot_multiple_tracking_maps_line,
+    plot_tracking_maps_line_vs_reference,
 )
-from trackerstudies.utils import load_fully_setup_tracker_runs
+from trackerstudies.utils import (
+    load_fully_setup_tracker_runs,
+)
 
 
 def test_plot_tracking_map():
@@ -111,4 +117,44 @@ def test_plot_referenced_tracking_map_histogram():
     reco = "Prompt"
     plot_referenced_tracking_map_histogram(
         run_number, reference_run_number, reco, show=SHOW_PLOTS
+    )
+
+
+def test_plot_reference_subtracted_tracking_map():
+    run_number = 317512
+    reference_run_number = 317435
+    reco = "Prompt"
+
+    plot_tracking_map(run_number, reco)
+    plot_tracking_map(reference_run_number, reco)
+
+    plot_reference_subtracted_tracking_map(
+        run_number, reference_run_number, reco, show=SHOW_PLOTS
+    )
+    plot_reference_subtracted_tracking_map_3d(
+        run_number, reference_run_number, reco, elev=45, azim=35, show=SHOW_PLOTS
+    )
+
+    ref3 = 319337
+    ref4 = 319449
+
+    plot_tracking_map(ref3, reco)
+    plot_tracking_map(ref4, reco)
+
+    plot_reference_subtracted_tracking_map_3d(
+        ref3, ref4, reco, elev=45, azim=35, show=SHOW_PLOTS
+    )
+
+
+def test_plot_multiple_tracking_maps_line():
+    run_numbers = [317512, 317435, 319337, 319449]
+    reco = "Prompt"
+    # plot_multiple_tracking_maps_line(run_numbers, reco, show=SHOW_PLOTS)
+
+    run_numbers = [317512, 317435]
+    plot_multiple_tracking_maps_line(run_numbers, reco, show=SHOW_PLOTS)
+
+    title = "Bad run"
+    plot_tracking_maps_line_vs_reference(
+        317512, 317435, reco, title=title, show=SHOW_PLOTS
     )

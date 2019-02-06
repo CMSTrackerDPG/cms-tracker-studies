@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from trackerstudies.utils import load_tracking_map_content
-from .algorithms import binned_angular_correlation
+from .algorithms import binned_angular_correlation, most_common_scale
 from .extract import (
     extract_tracking_map_content,
     extract_tracking_map_labels,
@@ -16,6 +16,7 @@ from .plotutils import (
     save_with_default_name,
     plot_histogram,
     plot_3d_matrix,
+    _post_process_plot,
 )
 
 
@@ -63,6 +64,81 @@ def plot_tracking_map_line(run_number, reco, *args, **kwargs):
         kwargs["save"] = "tracking_map_line_{}_{}.pdf".format(run_number, reco)
 
     plot_line(x, y, xlabel=xlabel, ylabel=ylabel, title=title, *args, **kwargs)
+
+
+def plot_tracking_maps_line_vs_reference(
+    run_number, reference_run_number, reco, *args, **kwargs
+):
+    tracking_map = load_tracking_map(run_number, reco)
+    tracking_map_content = extract_tracking_map_content(tracking_map)
+    reference_map_content = load_tracking_map_content(reference_run_number, reco)
+
+    scale = most_common_scale(tracking_map_content, reference_map_content)
+    tracking_map_scaled = tracking_map_content * scale
+
+    max = np.max(reference_map_content)
+
+    tracking_map_normalized = tracking_map_scaled / max
+    refrence_map_normalized = reference_map_content / max
+
+    fig, ax = plt.subplots()
+
+    matrix = np.transpose(tracking_map_normalized)
+    y = np.reshape(matrix, matrix.size)
+    x = np.arange(0, matrix.size)
+
+    matrix_ref = np.transpose(refrence_map_normalized)
+    y_ref = np.reshape(matrix_ref, matrix_ref.size)
+    x_ref = np.arange(0, matrix_ref.size)
+
+    plt.plot(x, y, alpha=0.75, label=run_number)
+    plt.plot(x_ref, y_ref, alpha=0.75, label=reference_run_number)
+
+    plt.legend()
+    vals = ax.get_yticks()
+    ax.set_yticklabels(["{:,.2%}".format(x) for x in vals])
+
+    xlabel, ylabel = extract_tracking_map_labels(tracking_map)
+    title = "{}\n{} (scaled) vs. {} ({})".format(
+        extract_tracking_map_title(tracking_map), run_number, reference_run_number, reco
+    )
+
+    if kwargs.get("title", None):
+        title = "{}\n{}".format(title, kwargs.pop("title"))
+
+    _post_process_plot(xlabel=xlabel, ylabel=ylabel, title=title, *args, **kwargs)
+
+
+def plot_multiple_tracking_maps_line(run_numbers, reco, *args, **kwargs):
+    fig, ax = plt.subplots()
+
+    for run_number in run_numbers:
+        tracking_map = load_tracking_map_content(run_number, reco)
+        matrix = np.transpose(tracking_map)
+        y = np.reshape(matrix, matrix.size)
+        x = np.arange(0, matrix.size)
+        plt.plot(x, y, label=run_number)
+
+    plt.legend()
+    if kwargs.get("save", False) is True:
+        kwargs["save"] = "tracking_map_line_{}_{}.pdf".format(run_number, reco)
+    _post_process_plot(*args, **kwargs)
+
+
+def plot_multiple_tracking_maps_line_scaled(run_numbers, reco, *args, **kwargs):
+    fig, ax = plt.subplots()
+
+    for run_number in run_numbers:
+        tracking_map = load_tracking_map_content(run_number, reco)
+        matrix = np.transpose(tracking_map)
+        y = np.reshape(matrix, matrix.size)
+        x = np.arange(0, matrix.size)
+        plt.plot(x, y, label=run_number)
+
+    plt.legend()
+    if kwargs.get("save", False) is True:
+        kwargs["save"] = "tracking_map_line_{}_{}.pdf".format(run_number, reco)
+    _post_process_plot(*args, **kwargs)
 
 
 def plot_reference_distribution(dataframe, *args, **kwargs):
@@ -138,3 +214,56 @@ def plot_referenced_tracking_map_histogram(
         title = "{}\n{}".format(title, kwargs.pop("title"))
 
     plot_histogram(ratios, title=title, *args, **kwargs)
+
+
+def plot_reference_subtracted_tracking_map(
+    run_number, reference_run_number, reco, *args, **kwargs
+):
+    tracking_map = load_tracking_map_content(run_number, reco)
+    reference_map = load_tracking_map_content(reference_run_number, reco)
+    scale = most_common_scale(tracking_map, reference_map)
+    tracking_map_scaled = tracking_map * scale
+    max = np.max(reference_map)
+
+    tracking_map_normalized = tracking_map_scaled / max
+    refrence_map_normalized = reference_map / max
+
+    title = "{} - {} ({})".format(reference_run_number, run_number, reco)
+    if kwargs.get("title", None):
+        title = "{}\n{}".format(title, kwargs.pop("title"))
+
+    plot_matrix(
+        refrence_map_normalized - tracking_map_normalized, title=title, *args, **kwargs
+    )
+
+
+def plot_reference_subtracted_tracking_map_3d(
+    run_number, reference_run_number, reco, *args, **kwargs
+):
+    tracking_map = load_tracking_map(run_number, reco)
+    xlabel, ylabel = extract_tracking_map_labels(tracking_map)
+    matrix = extract_tracking_map_content(tracking_map)
+
+    reference_map = load_tracking_map_content(reference_run_number, reco)
+    scale = most_common_scale(matrix, reference_map)
+    tracking_map_scaled = matrix * scale
+    max = np.max(reference_map)
+
+    tracking_map_normalized = tracking_map_scaled / max
+    refrence_map_normalized = reference_map / max
+
+    title = "{}\n{} - {} ({})".format(
+        extract_tracking_map_title(tracking_map), reference_run_number, run_number, reco
+    )
+
+    if kwargs.get("title", None):
+        title = "{}\n{}".format(title, kwargs.pop("title"))
+
+    plot_3d_matrix(
+        refrence_map_normalized - tracking_map_normalized,
+        xlabel=xlabel,
+        ylabel=ylabel,
+        title=title,
+        *args,
+        **kwargs
+    )

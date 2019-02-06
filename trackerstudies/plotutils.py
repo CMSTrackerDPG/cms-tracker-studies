@@ -23,7 +23,16 @@ def plot_3d_matrix(matrix, *args, **kwargs):
     Y = np.arange(0, line_count, 1)
     X, Y = np.meshgrid(X, Y)
 
-    surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+    surf = ax.plot_surface(
+        X,
+        Y,
+        Z,
+        cmap=cm.coolwarm,
+        vmin=kwargs.pop("vmin", None),
+        vmax=kwargs.pop("vmax", None),
+        linewidth=0,
+        antialiased=False,
+    )
 
     fig.colorbar(surf, shrink=0.5, aspect=5)
     ax.view_init(kwargs.pop("elev", None), kwargs.pop("azim", None))
