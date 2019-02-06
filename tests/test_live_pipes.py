@@ -1,13 +1,19 @@
 import math
 
 from trackerstudies.constants import subdetectors
+from trackerstudies.filters import filter_run_number_range
 from trackerstudies.load import (
     load_run_registry_json,
     load_tracker_runs,
     load_tkdqmdoctor_runs,
 )
 from trackerstudies.merge import merge_runreg_tkdqmdoc
-from trackerstudies.pipes import unify_columns, add_reference_cost, add_is_commissioning
+from trackerstudies.pipes import (
+    unify_columns,
+    add_reference_cost,
+    add_is_commissioning,
+    extract_run_numbers,
+)
 
 
 class TestUnify:
@@ -85,3 +91,9 @@ def test_is_commissioning():
 
     assert tracker_runs.loc[(314541, "express"), "is_commissioning"]
     assert tracker_runs.loc[(314541, "online"), "is_commissioning"]
+
+
+def test_run_numbers():
+    tracker_runs = load_tracker_runs()
+    runs = tracker_runs.pipe(filter_run_number_range, 313181, 313183)
+    assert set([313181, 313182, 313183]) == set(runs.pipe(extract_run_numbers))

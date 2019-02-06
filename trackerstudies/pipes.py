@@ -120,3 +120,11 @@ def add_is_special(dataframe):
         lambda row: determine_is_special(row.run_class_name, row.rda_name), axis=1
     )
     return dataframe
+
+
+def extract_run_numbers(dataframe):
+    """
+    :param dataframe: pandas dataframe containing the runs
+    :return: list of unique run numbers
+    """
+    return list(dataframe.run_number.unique())
