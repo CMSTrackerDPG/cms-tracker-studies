@@ -135,14 +135,14 @@ def test_plot_reference_subtracted_tracking_map():
         run_number, reference_run_number, reco, elev=45, azim=35, show=SHOW_PLOTS
     )
 
-    ref3 = 319337
-    ref4 = 319449
+    run2 = 319449
+    ref2 = 319337
 
-    plot_tracking_map(ref3, reco)
-    plot_tracking_map(ref4, reco)
+    plot_tracking_map(run2, reco)
+    plot_tracking_map(ref2, reco)
 
     plot_reference_subtracted_tracking_map_3d(
-        ref3, ref4, reco, elev=45, azim=35, show=SHOW_PLOTS
+        run2, ref2, reco, elev=45, azim=35, show=SHOW_PLOTS
     )
 
 

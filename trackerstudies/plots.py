@@ -219,21 +219,31 @@ def plot_referenced_tracking_map_histogram(
 def plot_reference_subtracted_tracking_map(
     run_number, reference_run_number, reco, *args, **kwargs
 ):
-    tracking_map = load_tracking_map_content(run_number, reco)
-    reference_map = load_tracking_map_content(reference_run_number, reco)
-    scale = most_common_scale(tracking_map, reference_map)
-    tracking_map_scaled = tracking_map * scale
-    max = np.max(reference_map)
+    tracking_map = load_tracking_map(run_number, reco)
+    tracking_map_content = extract_tracking_map_content(tracking_map)
+    reference_map_content = load_tracking_map_content(reference_run_number, reco)
+    scale = most_common_scale(tracking_map_content, reference_map_content)
+    tracking_map_scaled = tracking_map_content * scale
+    max = np.max(reference_map_content)
 
     tracking_map_normalized = tracking_map_scaled / max
-    refrence_map_normalized = reference_map / max
+    refrence_map_normalized = reference_map_content / max
 
-    title = "{} - {} ({})".format(reference_run_number, run_number, reco)
+    xlabel, ylabel = extract_tracking_map_labels(tracking_map)
+    title = "Subtracted {}\n{} - {} (scaled) ({})".format(
+        extract_tracking_map_title(tracking_map), reference_run_number, run_number, reco
+    )
+
     if kwargs.get("title", None):
         title = "{}\n{}".format(title, kwargs.pop("title"))
 
     plot_matrix(
-        refrence_map_normalized - tracking_map_normalized, title=title, *args, **kwargs
+        refrence_map_normalized - tracking_map_normalized,
+        xlabel=xlabel,
+        ylabel=ylabel,
+        title=title,
+        *args,
+        **kwargs
     )
 
 
@@ -252,18 +262,30 @@ def plot_reference_subtracted_tracking_map_3d(
     tracking_map_normalized = tracking_map_scaled / max
     refrence_map_normalized = reference_map / max
 
-    title = "{}\n{} - {} ({})".format(
-        extract_tracking_map_title(tracking_map), reference_run_number, run_number, reco
+    scale_factor = np.around(scale, decimals=1)
+
+    title = "{}\n{} - {} (scaled * {}) ({})".format(
+        extract_tracking_map_title(tracking_map), reference_run_number, run_number, scale_factor, reco
     )
 
     if kwargs.get("title", None):
         title = "{}\n{}".format(title, kwargs.pop("title"))
 
+    matrix = refrence_map_normalized - tracking_map_normalized
+
+    if not kwargs.get("vmin", None):
+        max = np.max(matrix)
+        min = np.min(matrix)
+        maximum = np.maximum(np.abs(max), np.abs(min))
+        kwargs['vmax'] = maximum
+        kwargs['vmin'] = -maximum
+
     plot_3d_matrix(
-        refrence_map_normalized - tracking_map_normalized,
+        matrix,
         xlabel=xlabel,
         ylabel=ylabel,
         title=title,
+        use_percent=True,
         *args,
         **kwargs
     )

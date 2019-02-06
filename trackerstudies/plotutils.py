@@ -12,7 +12,7 @@ def plot_matrix(matrix, *args, **kwargs):
     _post_process_plot(*args, **kwargs)
 
 
-def plot_3d_matrix(matrix, *args, **kwargs):
+def plot_3d_matrix(matrix, use_percent=False, *args, **kwargs):
     fig = plt.figure()
     ax = fig.gca(projection="3d")
 
@@ -36,6 +36,10 @@ def plot_3d_matrix(matrix, *args, **kwargs):
 
     fig.colorbar(surf, shrink=0.5, aspect=5)
     ax.view_init(kwargs.pop("elev", None), kwargs.pop("azim", None))
+
+    if use_percent:
+        vals = ax.get_zticks()
+        ax.set_zticklabels(["{:,.2%}".format(x) for x in vals])
     _post_process_plot(*args, **kwargs)
 
 
