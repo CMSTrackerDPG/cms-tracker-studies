@@ -10,7 +10,12 @@ from trackerstudies.filters import (
     exclude_open,
 )
 from trackerstudies.settings import ENTROPY_CACHE_NAME
-from .merge import merge_runreg_tkdqmdoc, merge_runreg_oms, merge_runreg_runreg
+from .merge import (
+    merge_runreg_tkdqmdoc,
+    merge_runreg_oms,
+    merge_runreg_runreg,
+    merge_runreg_tkdqmdoc_problem_runs,
+)
 from .pipes import (
     add_runtype,
     add_is_bad,
@@ -28,6 +33,7 @@ from .load import (
     load_tkdqmdoctor_runs,
     load_oms_runs,
     load_global_runs,
+    load_tkdqmdoctor_problem_runs,
 )
 
 
@@ -151,3 +157,16 @@ def get_angular_entropy(run_number, reco, entropy_cache=None):
         entropy = calculate_angular_entropy(run_number, reco)
         entropy_cache.loc[(run_number, reco), "angular_entropy"] = entropy
         return entropy
+
+
+def load_merged_tracker_runs():
+    tracker_runs = load_tracker_runs()
+    tkdqmdoctor_runs = load_tkdqmdoctor_runs()
+    tkdqmdoctor_problem_runs = load_tkdqmdoctor_problem_runs()
+    oms_runs = load_oms_runs()
+
+    return (
+        tracker_runs.pipe(merge_runreg_tkdqmdoc, tkdqmdoctor_runs)
+        .pipe(merge_runreg_tkdqmdoc_problem_runs, tkdqmdoctor_problem_runs)
+        .pipe(merge_runreg_oms, oms_runs)
+    )

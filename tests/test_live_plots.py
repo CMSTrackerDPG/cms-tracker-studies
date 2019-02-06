@@ -33,9 +33,7 @@ from trackerstudies.plots import (
     plot_multiple_tracking_maps_line,
     plot_tracking_maps_line_vs_reference,
 )
-from trackerstudies.utils import (
-    load_fully_setup_tracker_runs,
-)
+from trackerstudies.utils import load_fully_setup_tracker_runs
 
 
 def test_plot_tracking_map():

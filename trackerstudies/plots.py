@@ -265,7 +265,11 @@ def plot_reference_subtracted_tracking_map_3d(
     scale_factor = np.around(scale, decimals=1)
 
     title = "{}\n{} - {} (scaled * {}) ({})".format(
-        extract_tracking_map_title(tracking_map), reference_run_number, run_number, scale_factor, reco
+        extract_tracking_map_title(tracking_map),
+        reference_run_number,
+        run_number,
+        scale_factor,
+        reco,
     )
 
     if kwargs.get("title", None):
@@ -277,8 +281,8 @@ def plot_reference_subtracted_tracking_map_3d(
         max = np.max(matrix)
         min = np.min(matrix)
         maximum = np.maximum(np.abs(max), np.abs(min))
-        kwargs['vmax'] = maximum
-        kwargs['vmin'] = -maximum
+        kwargs["vmax"] = maximum
+        kwargs["vmin"] = -maximum
 
     plot_3d_matrix(
         matrix,

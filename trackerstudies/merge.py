@@ -39,3 +39,20 @@ def merge_runreg_tkdqmdoc(runreg_dataframe, tkdqmdoc_dataframe):
         left_on=["run_number", "reco"],
         right_on=["run_number", "reco"],
     ).reset_index()
+
+
+def merge_runreg_tkdqmdoc_problem_runs(runreg_dataframe, tkdqmdoc_dataframe):
+    rr = runreg_dataframe.set_index(["run_number", "reco"])
+    tkdqm = tkdqmdoc_dataframe[["run_number", "reco", "problem_names"]]
+    tkdqm = tkdqm.set_index(["run_number", "reco"])
+
+    # Remove Duplicates
+    tkdqm = tkdqm[~tkdqm.index.duplicated(keep="first")]
+
+    return pandas.merge(
+        rr,
+        tkdqm,
+        how="left",
+        left_on=["run_number", "reco"],
+        right_on=["run_number", "reco"],
+    ).reset_index()

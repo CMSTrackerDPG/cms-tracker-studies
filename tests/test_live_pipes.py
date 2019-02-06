@@ -13,7 +13,9 @@ from trackerstudies.pipes import (
     add_reference_cost,
     add_is_commissioning,
     extract_run_numbers,
+    add_all_problems,
 )
+from trackerstudies.utils import load_merged_tracker_runs, setup_pandas_display
 
 
 class TestUnify:
@@ -97,3 +99,98 @@ def test_run_numbers():
     tracker_runs = load_tracker_runs()
     runs = tracker_runs.pipe(filter_run_number_range, 313181, 313183)
     assert set([313181, 313182, 313183]) == set(runs.pipe(extract_run_numbers))
+
+
+def test_has_problems():
+    runs = load_merged_tracker_runs()
+    runs = runs[~runs.problem_names.isnull()]
+    runs = runs.pipe(add_all_problems)
+
+    runs.set_index(["run_number", "reco"], inplace=True)
+    assert runs.loc[(319488, "express"), "has_fed_error"], "FED Error in comment"
+    assert runs.loc[(324878, "express"), "has_fed_error"], "FED Error in problem names"
+    assert not runs.loc[(316653, "prompt"), "has_fed_error"], "No FED Error"
+
+    runs_with_fed_error = [
+        319697,
+        319882,
+        319909,
+        320065,
+        320920,
+        321011,
+        321069,
+        321149,
+        321151,
+        321152,
+        321153,
+        321178,
+        321219,
+        321221,
+        321295,
+        321310,
+        321311,
+        321312,
+        321313,
+        321397,
+        321431,
+        321432,
+        321777,
+        321778,
+        321780,
+        321973,
+        321975,
+        322480,
+        323109,
+        323829,
+        323954,
+        324231,
+        324239,
+        324333,
+        324410,
+        324418,
+        324420,
+        324878,
+        325680,
+    ]
+
+    runs.reset_index(inplace=True)
+    fed_error_runs = runs[runs.has_fed_error]
+    run_numbers = fed_error_runs.pipe(extract_run_numbers)
+
+    for run in runs_with_fed_error:
+        assert run in run_numbers
+
+    runs_with_ps_problem = [
+        321777,
+        321778,
+        321780,
+        321781,
+        322919,
+        322922,
+        322923,
+        322925,
+        322928,
+        322999,
+        323000,
+        323001,
+        323002,
+        323003,
+        323097,
+        323100,
+        323103,
+        323104,
+        323105,
+        323106,
+        323107,
+        323109,
+        323201,
+        323202,
+        323205,
+        323206,
+        323207,
+    ]
+    ps_error_runs = runs[runs.has_ps_problem]
+    run_numbers = ps_error_runs.pipe(extract_run_numbers)
+
+    for run in runs_with_ps_problem:
+        assert run in run_numbers

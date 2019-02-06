@@ -4,6 +4,16 @@ from .determine import (
     determine_is_heavy_ion,
     determine_is_commissioning,
     determine_is_special,
+    determine_has_fed_error,
+    determine_has_dcs_error,
+    determine_has_new_hole,
+    determine_has_dead_channel,
+    determine_has_low_signal_noise,
+    determine_has_noisy_module,
+    determine_has_power_supply_problem,
+    determine_has_low_cluster_charge,
+    determine_has_many_bad_components,
+    determine_has_trigger_problem,
 )
 
 
@@ -128,3 +138,40 @@ def extract_run_numbers(dataframe):
     :return: list of unique run numbers
     """
     return list(dataframe.run_number.unique())
+
+
+def add_problem_column(dataframe, new_column_name, determine_function):
+    dataframe.loc[:, new_column_name] = dataframe.apply(
+        lambda row: determine_function(row.problem_names, row.comment), axis=1
+    )
+
+    problem_run_numbers = extract_run_numbers(dataframe[dataframe[new_column_name]])
+    dataframe.loc[
+        dataframe.run_number.isin(problem_run_numbers), new_column_name
+    ] = True
+    return dataframe
+
+
+def add_all_problems(dataframe):
+    return (
+        dataframe.pipe(add_problem_column, "has_fed_error", determine_has_fed_error)
+        .pipe(add_problem_column, "has_dcs_error", determine_has_dcs_error)
+        .pipe(add_problem_column, "has_new_hole", determine_has_new_hole)
+        .pipe(add_problem_column, "has_dead_channel", determine_has_dead_channel)
+        .pipe(
+            add_problem_column, "has_low_signal_noise", determine_has_low_signal_noise
+        )
+        .pipe(add_problem_column, "has_noisy_module", determine_has_noisy_module)
+        .pipe(add_problem_column, "has_ps_problem", determine_has_power_supply_problem)
+        .pipe(
+            add_problem_column,
+            "has_low_cluster_charge",
+            determine_has_low_cluster_charge,
+        )
+        .pipe(
+            add_problem_column,
+            "has_many_bad_components",
+            determine_has_many_bad_components,
+        )
+        .pipe(add_problem_column, "has_trigger_problem", determine_has_trigger_problem)
+    )
