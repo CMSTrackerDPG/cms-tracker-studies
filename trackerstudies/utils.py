@@ -23,6 +23,7 @@ from .pipes import (
     add_is_heavy_ion,
     add_is_commissioning,
     add_is_special,
+    add_all_problems,
 )
 from .algorithms import reference_cost, angular_correlation_entropy
 from .exceptions import TrackingMapNotFound
@@ -169,4 +170,25 @@ def load_merged_tracker_runs():
         tracker_runs.pipe(merge_runreg_tkdqmdoc, tkdqmdoctor_runs)
         .pipe(merge_runreg_tkdqmdoc_problem_runs, tkdqmdoctor_problem_runs)
         .pipe(merge_runreg_oms, oms_runs)
+    )
+
+
+def add_all_columns(dataframe):
+    return (
+        dataframe.pipe(add_runtype)
+        .pipe(add_is_bad)
+        .pipe(add_reference_cost)
+        .pipe(add_is_special)
+        .pipe(add_is_commissioning)
+        .pipe(add_is_heavy_ion)
+        .pipe(add_all_problems)
+    )
+
+
+def load_full_tracker_runs():
+    return (
+        load_merged_tracker_runs()
+        .pipe(add_all_columns)
+        .pipe(exclude_commissioning)
+        .pipe(exclude_special)
     )

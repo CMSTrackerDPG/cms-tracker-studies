@@ -15,7 +15,7 @@ from trackerstudies.pipes import (
     extract_run_numbers,
     add_all_problems,
 )
-from trackerstudies.utils import load_merged_tracker_runs, setup_pandas_display
+from trackerstudies.utils import load_merged_tracker_runs
 
 
 class TestUnify:
@@ -103,7 +103,6 @@ def test_run_numbers():
 
 def test_has_problems():
     runs = load_merged_tracker_runs()
-    runs = runs[~runs.problem_names.isnull()]
     runs = runs.pipe(add_all_problems)
 
     runs.set_index(["run_number", "reco"], inplace=True)
@@ -154,6 +153,7 @@ def test_has_problems():
     ]
 
     runs.reset_index(inplace=True)
+
     fed_error_runs = runs[runs.has_fed_error]
     run_numbers = fed_error_runs.pipe(extract_run_numbers)
 

@@ -1,4 +1,5 @@
 import numpy
+import pandas
 
 
 def determine_tracker_is_bad(pixel, strip, tracking, runtype):
@@ -44,9 +45,11 @@ def determine_runtype(run_class_name):
 
 
 def determine_has_problem(problem_names, comment, problem_string):
-    if any(problem_string in problem.lower() for problem in problem_names):
+    if type(problem_names) is list and any(
+        [problem_string in problem.lower() for problem in problem_names]
+    ):
         return True
-    if problem_string in comment.lower():
+    if not pandas.isnull(comment) and problem_string in comment.lower():
         return True
     return False
 
