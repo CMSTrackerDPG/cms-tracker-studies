@@ -1,13 +1,17 @@
+import pandas
+
 from trackerstudies.load import (
     load_tracker_runs,
     load_global_runs,
     load_oms_runs,
     load_tkdqmdoctor_runs,
+    load_all_histogram_folders,
 )
 from trackerstudies.merge import (
     merge_runreg_runreg,
     merge_runreg_oms,
     merge_runreg_tkdqmdoc,
+    merge_runreg_histograms,
 )
 
 
@@ -67,3 +71,15 @@ def test_merge_runreg_tkdqmdoctor_runs():
 
     assert len(tracker_runs) == tracker_size, "No Change in Line count"
     assert tracker_column_count + 6 == merged_column_count, "Increased Column count"
+
+
+def test_merge_runreg_histograms():
+    tracker_runs = load_tracker_runs()
+    histograms = load_all_histogram_folders()
+
+    runs = merge_runreg_histograms(tracker_runs, histograms)
+
+    runs.set_index(["run_number", "reco"], inplace=True)
+    assert runs.loc[(327564, "express"), "Seeds.detachedTriplet.mean"] == 10507.7
+    assert runs.loc[(327564, "express"), "pixel"] == "GOOD"
+    assert pandas.isnull(runs.loc[(314472, "online"), "Seeds.detachedTriplet.mean"])

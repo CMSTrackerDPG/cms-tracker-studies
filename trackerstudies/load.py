@@ -105,3 +105,73 @@ def load_tkdqmdoctor_problem_runs():
     filename = "tkdqmdoctor_problem_runs.json"
     path = os.path.join(DATA_DIRECTORY, filename)
     return load_tkdqmdoctor_runs_json(path)
+
+
+def read_histogram_folder(folder_name, attribute_prefix=None):
+    folder = os.path.join("data", folder_name)
+    file_names = sorted(os.listdir(folder))
+
+    if not attribute_prefix:
+        attribute_prefix = folder_name
+
+    attributes = ["rms", "mean", "entries", "integral"]
+    attributes = [
+        "{}.{}".format(attribute_prefix, attribute) for attribute in attributes
+    ]
+    columns = ["run_number", "reco", *attributes]
+
+    dataframe = pandas.DataFrame(columns=columns)
+    dataframe.set_index(["run_number", "reco"], inplace=True)
+
+    for file_name in file_names:
+        run_number, reco = tuple(file_name.replace(".json", "").split("_"))
+        run_number = int(run_number)
+        path = os.path.join(folder, file_name)
+        with open(path) as file:
+            histogram = json.load(file)
+            rms = histogram["hist"]["stats"]["rms"]["X"]["value"]
+            mean = histogram["hist"]["stats"]["mean"]["X"]["value"]
+            entries = histogram["hist"]["stats"]["entries"]
+            integral = histogram["hist"]["bins"]["integral"]
+
+            dataframe.loc[(run_number, reco), :] = [rms, mean, entries, integral]
+
+    return dataframe
+
+
+def load_all_histogram_folders(from_pickle=True):
+    pickle_path = os.path.join("data", "histograms.pkl")
+    try:
+        if from_pickle:
+            return pandas.read_pickle(pickle_path)
+    except FileNotFoundError:
+        pass
+    prefixes = {
+        "Chi2oNDF_GenTk": "Chi2oNDF",
+        "NumberOfRecHitsPerTrack_GenTk": "Hits",
+        "NumberOfRecHitsPerTrack_Pixel_GenTk": "Hits.Pixel",
+        "NumberOfRecHitsPerTrack_Strip_GenTk": "Hits.Strip",
+        "NumberOfSeeds_detachedTripletStepSeeds_detachedTripletStep": "Seeds.detachedTriplet",
+        "NumberOfSeeds_initialStepSeeds_initialStep": "Seeds.initialStep",
+        "NumberOfSeeds_lowPtTripletStepSeeds_lowPtTripletStep": "Seeds.lowPtTriplet",
+        "NumberOfSeeds_mixedTripletStepSeeds_mixedTripletStep": "Seeds.mixedTriplet",
+        "NumberOfSeeds_pixelLessStepSeeds_pixelLessStep": "Seeds.pixelLess",
+        "NumberOfSeeds_pixelPairStepSeeds_pixelPairStep": "Seeds.pixelPair",
+        "NumberOfSeeds_tobTecStepSeeds_tobTecStep": "Seeds.tobTec",
+        "NumberOfTracks_GenTk": "Tracks",
+        "TrackEta_ImpactPoint_GenTk": "TrackEta",
+        "TrackPhi_ImpactPoint_GenTk": "TrackPhi",
+        "TrackPt_ImpactPoint_GenTk": "TrackPt",
+    }
+
+    dataframe = pandas.DataFrame(columns=["run_number", "reco"])
+    dataframe.set_index(["run_number", "reco"], inplace=True)
+
+    for folder, prefix in prefixes.items():
+        new_dataframe = read_histogram_folder(folder, prefix)
+        dataframe = pandas.merge(
+            dataframe, new_dataframe, left_index=True, right_index=True, how="outer"
+        )
+
+    dataframe.to_pickle(pickle_path)
+    return dataframe

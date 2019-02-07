@@ -56,3 +56,11 @@ def merge_runreg_tkdqmdoc_problem_runs(runreg_dataframe, tkdqmdoc_dataframe):
         left_on=["run_number", "reco"],
         right_on=["run_number", "reco"],
     ).reset_index()
+
+
+def merge_runreg_histograms(runreg_dataframe, histograms_dataframe):
+    rr = runreg_dataframe.set_index(["run_number", "reco"])
+
+    return pandas.merge(
+        rr, histograms_dataframe, how="left", left_index=True, right_index=True
+    ).reset_index()

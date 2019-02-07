@@ -9,6 +9,8 @@ from trackerstudies.load import (
     load_tkdqmdoctor_runs,
     load_tkdqmdoctor_problem_runs,
     load_all_runreg_runs,
+    read_histogram_folder,
+    load_all_histogram_folders,
 )
 
 
@@ -82,3 +84,17 @@ class TestTkDQMDoctor:
         runs = load_tkdqmdoctor_problem_runs()
         assert len(runs) >= 199
         assert len(runs) <= 300
+
+
+def test_read_histogram_folder():
+    df = read_histogram_folder("NumberOfRecHitsPerTrack_GenTk", attribute_prefix="hits")
+
+    assert len(df) >= 975
+    assert len(df.columns) == 4
+
+
+def test_read_all_histogram_folders():
+    df = load_all_histogram_folders()
+
+    assert len(df) >= 975
+    assert len(df.columns) >= 60
