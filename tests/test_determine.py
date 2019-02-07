@@ -1,6 +1,10 @@
 import numpy
 
-from trackerstudies.determine import determine_tracker_is_bad, determine_runtype
+from trackerstudies.determine import (
+    determine_tracker_is_bad,
+    determine_runtype,
+    determine_is_certification_status_summary,
+)
 
 
 def test_determine_is_bad():
@@ -24,3 +28,14 @@ def test_determine_runtype():
     assert "collisions" == determine_runtype("Collisions18")
     assert numpy.isnan(determine_runtype("SomethinngCompletelyWrong"))
     assert "collisions" == determine_runtype("Collisions18SpecialRun")
+
+
+def test_determine_is_certification_status_summary():
+    assert "Good" == determine_is_certification_status_summary("GOOD", "GOOD", "GOOD")
+    assert "Bad" == determine_is_certification_status_summary("BAD", "BAD", "BAD")
+    assert "Pixel Excluded, Tracking Bad" == determine_is_certification_status_summary(
+        "EXCLUDED", "GOOD", "BAD"
+    )
+    assert "Strip Bad" == determine_is_certification_status_summary(
+        "GOOD", "BAD", "GOOD"
+    )
