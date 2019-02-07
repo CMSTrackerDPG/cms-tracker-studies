@@ -10,21 +10,6 @@ from trackerstudies.filters import (
     exclude_open,
 )
 from trackerstudies.settings import ENTROPY_CACHE_NAME
-from .merge import (
-    merge_runreg_tkdqmdoc,
-    merge_runreg_oms,
-    merge_runreg_runreg,
-    merge_runreg_tkdqmdoc_problem_runs,
-)
-from .pipes import (
-    add_runtype,
-    add_is_bad,
-    add_reference_cost,
-    add_is_heavy_ion,
-    add_is_commissioning,
-    add_is_special,
-    add_all_problems,
-)
 from .algorithms import reference_cost, angular_correlation_entropy
 from .exceptions import TrackingMapNotFound
 from .extract import extract_tracking_map_content
@@ -35,6 +20,24 @@ from .load import (
     load_oms_runs,
     load_global_runs,
     load_tkdqmdoctor_problem_runs,
+    load_all_histogram_folders,
+)
+from .merge import (
+    merge_runreg_tkdqmdoc,
+    merge_runreg_oms,
+    merge_runreg_runreg,
+    merge_runreg_tkdqmdoc_problem_runs,
+    merge_runreg_histograms,
+)
+from .pipes import (
+    add_runtype,
+    add_is_bad,
+    add_reference_cost,
+    add_is_heavy_ion,
+    add_is_commissioning,
+    add_is_special,
+    add_all_problems,
+    add_status_summary,
 )
 
 
@@ -79,7 +82,7 @@ def calculate_angular_entropy(run_number, reco):
     return entropy
 
 
-def setup_pandas_display(max_rows=10, max_columns=10, width=1000):
+def setup_pandas_display(max_rows=10, max_columns=10, width=10000):
     pandas.set_option("display.max_rows", max_rows)
     pandas.set_option("display.max_columns", max_columns)
     pandas.set_option("display.width", width)
@@ -185,10 +188,53 @@ def add_all_columns(dataframe):
     )
 
 
-def load_full_tracker_runs():
-    return (
-        load_merged_tracker_runs()
-        .pipe(add_all_columns)
+def load_runs(from_pickle=True):
+    """
+    Loads all runs from the Tracker workspace merged with:
+     - OMS
+     - TkDQMDoctor
+     - DQM GUI Histograms
+     - twiki TODO
+     -
+
+    Adding all sorts of additional column information.
+
+    Excluding Commissioning, Special, Online and Open Runs
+    :return:
+    """
+    pickle_path = os.path.join("data", "runs.pkl")
+    try:
+        if from_pickle:
+            return pandas.read_pickle(pickle_path)
+    except FileNotFoundError:
+        pass
+
+    tracker_runs = load_tracker_runs()
+    tkdqmdoctor_runs = load_tkdqmdoctor_runs()
+    tkdqmdoctor_problem_runs = load_tkdqmdoctor_problem_runs()
+    oms_runs = load_oms_runs()
+    histograms = load_all_histogram_folders()
+
+    runs = (
+        tracker_runs.pipe(merge_runreg_tkdqmdoc, tkdqmdoctor_runs)
+        .pipe(merge_runreg_tkdqmdoc_problem_runs, tkdqmdoctor_problem_runs)
+        .pipe(merge_runreg_oms, oms_runs)
+        .pipe(merge_runreg_histograms, histograms)
+        .pipe(add_runtype)
+        .pipe(add_is_special)
+        .pipe(add_is_commissioning)
         .pipe(exclude_commissioning)
         .pipe(exclude_special)
+        .pipe(exclude_open)
+        .pipe(add_is_bad)
+        .pipe(add_is_heavy_ion)
+        .pipe(add_all_problems)
+        .pipe(add_status_summary)
     )
+
+    # TODO .pipe(add_reference_cost)
+    # TODO .pipe(add_angular_correlation_entropy)
+    # TODO .pipe(add_scaled_reference_difference_sum)
+
+    runs.to_pickle(pickle_path)
+    return runs

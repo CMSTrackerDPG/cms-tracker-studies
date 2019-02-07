@@ -2,6 +2,7 @@ from trackerstudies.utils import (
     load_fully_setup_tracker_runs,
     load_fully_setup_global_runs,
     load_all_workspaces_full_setup,
+    load_runs,
 )
 
 
@@ -48,3 +49,9 @@ def test_load_all_workspaces_full_setup():
     assert {"express", "prompt", "rereco"} == set(runs.reco.unique())
     assert {"cosmics", "collisions"} == set(runs.runtype.unique())
     assert {"tracker", "global"} == set(runs.workspace.unique())
+
+
+def test_load_runs():
+    runs = load_runs()
+    assert len(runs) > 3000
+    assert len(runs.columns) > 150
