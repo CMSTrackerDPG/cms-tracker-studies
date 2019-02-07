@@ -102,7 +102,11 @@ def most_common_scale(matrix, reference_matrix):
     """
     :return: most common scale factor to scale matrix to reference_matrix
     """
-    ratios = np.divide(reference_matrix, matrix)
+    try:
+        ratios = np.divide(reference_matrix, matrix)
+    except ValueError:
+        # TODO ValueError: operands could not be broadcast together with shapes (32,31) (32,26)
+        return np.nan
     ratios_vector = np.reshape(ratios, ratios.size)
     ratios_vector = ratios_vector[(ratios_vector < np.inf) & (ratios_vector > np.NINF)]
     if ratios_vector.size == 0:
