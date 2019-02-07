@@ -94,3 +94,23 @@ def determine_has_many_bad_components(problem_names, comment):
 
 def determine_has_trigger_problem(problem_names, comment):
     return determine_has_problem(problem_names, comment, "trigger issue")
+
+
+def determine_is_certification_status_summary(pixel, strip, tracking):
+    if all(component == "GOOD" for component in [pixel, strip, tracking]):
+        return "Good"
+    if all(component == "BAD" for component in [pixel, strip, tracking]):
+        return "Bad"
+
+    stati = []
+
+    if pixel != "GOOD":
+        stati.append("Pixel {}".format(pixel.capitalize()))
+
+    if strip != "GOOD":
+        stati.append("Strip {}".format(strip.capitalize()))
+
+    if tracking != "GOOD":
+        stati.append("Tracking {}".format(tracking.capitalize()))
+
+    return ", ".join(stati)

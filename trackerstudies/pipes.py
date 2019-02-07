@@ -14,6 +14,7 @@ from .determine import (
     determine_has_low_cluster_charge,
     determine_has_many_bad_components,
     determine_has_trigger_problem,
+    determine_is_certification_status_summary,
 )
 
 
@@ -175,3 +176,24 @@ def add_all_problems(dataframe):
         )
         .pipe(add_problem_column, "has_trigger_problem", determine_has_trigger_problem)
     )
+
+
+def add_status_summary(dataframe):
+    """
+    Certification status summary
+
+    - "Good"
+    - "Pixel Bad"
+    - "Strip Bad"
+    - "Tracking Bad"
+    - "Pixel Excluded, Tracking Bad"
+    ...
+    - "Bad"
+    """
+    dataframe.loc[:, "status_summary"] = dataframe.apply(
+        lambda row: determine_is_certification_status_summary(
+            row.pixel, row.strip, row.tracking
+        ),
+        axis=1,
+    )
+    return dataframe

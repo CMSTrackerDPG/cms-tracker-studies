@@ -14,6 +14,7 @@ from trackerstudies.pipes import (
     add_is_commissioning,
     extract_run_numbers,
     add_all_problems,
+    add_status_summary,
 )
 from trackerstudies.utils import load_merged_tracker_runs
 
@@ -194,3 +195,16 @@ def test_has_problems():
 
     for run in runs_with_ps_problem:
         assert run in run_numbers
+
+
+def test_add_status_summary():
+    runs = load_tracker_runs()
+
+    runs = runs.pipe(add_status_summary)
+    runs.set_index(["run_number", "reco"], inplace=True)
+
+    assert (
+        runs.loc[(313052, "express"), "status_summary"]
+        == "Pixel Excluded, Tracking Bad"
+    )
+    assert runs.loc[(313084, "prompt"), "status_summary"] == "Good"
