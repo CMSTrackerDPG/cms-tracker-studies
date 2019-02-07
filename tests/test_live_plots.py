@@ -32,8 +32,10 @@ from trackerstudies.plots import (
     plot_reference_subtracted_tracking_map_3d,
     plot_multiple_tracking_maps_line,
     plot_tracking_maps_line_vs_reference,
+    plot_tracking_maps_side_by_side,
+    plot_luminosity_lumisection_ratio,
 )
-from trackerstudies.utils import load_fully_setup_tracker_runs
+from trackerstudies.utils import load_fully_setup_tracker_runs, load_runs
 
 
 def test_plot_tracking_map():
@@ -69,7 +71,15 @@ def test_plot_reference_distribution():
     tkdqmdoctor_runs = load_tkdqmdoctor_runs()
     runs = merge_runreg_tkdqmdoc(tracker_runs, tkdqmdoctor_runs)
 
-    runs = runs.pipe(add_is_bad).pipe(exclude_online).pipe(exclude_rereco)
+    runs = (
+        runs.pipe(add_is_bad)
+        .pipe(exclude_online)
+        .pipe(exclude_rereco)
+        .pipe(add_is_commissioning)
+        .pipe(add_is_special)
+        .pipe(exclude_commissioning)
+        .pipe(exclude_special)
+    )
 
     plot_reference_distribution(runs, show=SHOW_PLOTS)
 
@@ -156,3 +166,25 @@ def test_plot_multiple_tracking_maps_line():
     plot_tracking_maps_line_vs_reference(
         317512, 317435, reco, title=title, show=SHOW_PLOTS
     )
+
+
+def test_plot_tracking_maps_side_by_side():
+    run_number = 317512
+    reference_run_number = 317435
+    subtilte = r"452 $ls$, 104.12 $pb^{-1}$"
+    plot_tracking_maps_side_by_side(
+        run_number,
+        reference_run_number,
+        "prompt",
+        subtitle=subtilte,
+        is_bad=False,
+        show=True,
+    )
+    plot_tracking_maps_side_by_side(
+        run_number, reference_run_number, "express", is_bad=False
+    )
+
+
+def test_plot_luminosity_lumis_ratio():
+    runs = load_runs()
+    plot_luminosity_lumisection_ratio(runs)

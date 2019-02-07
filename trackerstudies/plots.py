@@ -1,3 +1,5 @@
+import os
+
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
@@ -18,6 +20,10 @@ from .plotutils import (
     plot_3d_matrix,
     _post_process_plot,
 )
+
+from matplotlib import cm
+import matplotlib as mpl
+from mpl_toolkits.mplot3d import Axes3D
 
 
 def plot_tracking_map(run_number, reco, *args, **kwargs):
@@ -197,7 +203,8 @@ def plot_angular_entropy(dataframe, *args, **kwargs):
     g = sns.FacetGrid(dataframe, col="reco", row="runtype", hue="is_bad")
     g.map(plt.scatter, "run_number", "angular_entropy", alpha=0.7)
 
-    save_with_default_name(kwargs.get("save", False), "angular_entropy.pdf")
+    path = os.path.join("plots", "angular_entropy.pdf")
+    save_with_default_name(kwargs.get("save", False), path)
 
     if kwargs.get("show", False):
         plt.show()
@@ -275,7 +282,11 @@ def plot_reference_subtracted_tracking_map_3d(
     if kwargs.get("title", None):
         title = "{}\n{}".format(title, kwargs.pop("title"))
 
-    matrix = refrence_map_normalized - tracking_map_normalized
+    try:
+        matrix = refrence_map_normalized - tracking_map_normalized
+    except ValueError:
+        # TODO ValueError: operands could not be broadcast together with shapes (32,31) (32,26)
+        return
 
     if not kwargs.get("vmin", None):
         max = np.max(matrix)
@@ -293,3 +304,107 @@ def plot_reference_subtracted_tracking_map_3d(
         *args,
         **kwargs
     )
+
+
+def plot_tracking_maps_side_by_side(
+    run_number,
+    reference_run_number,
+    reco,
+    is_bad=None,
+    subtitle=None,
+    subdir=None,
+    show=False,
+):
+    tracking_map = load_tracking_map(run_number, reco)
+
+    tracking_map_content = extract_tracking_map_content(tracking_map)
+    reference_map_content = load_tracking_map_content(reference_run_number, reco)
+
+    map_title = extract_tracking_map_title(tracking_map)
+    xlabel, ylabel = extract_tracking_map_labels(tracking_map)
+
+    fig, ax = plt.subplots(1, 3, figsize=(8, 4.5))
+
+    ax[0].imshow(tracking_map_content)
+    title = "{}".format(run_number)
+    if is_bad is not None:
+        title += " (Bad)" if is_bad else " (Good)"
+    ax[0].set_title(title)
+
+    ax[2].imshow(reference_map_content)
+    title = "{} (ref)".format(reference_run_number)
+    ax[2].set_title(title)
+
+    scale = most_common_scale(tracking_map_content, reference_map_content)
+    tracking_map_scaled = tracking_map_content * scale
+    max = np.max(reference_map_content)
+
+    tracking_map_normalized = tracking_map_scaled / max
+    refrence_map_normalized = reference_map_content / max
+
+    try:
+        matrix = refrence_map_normalized - tracking_map_normalized
+
+        max = np.max(matrix)
+        min = np.min(matrix)
+        maximum = np.maximum(np.abs(max), np.abs(min))
+        vmax = maximum
+        vmin = -maximum
+
+        scale_factor = np.around(scale, decimals=1)
+
+        ax[1].imshow(matrix, vmax=vmax, vmin=vmin, cmap=cm.seismic)
+        title = "{} - {} \n Scale: {}".format(
+            reference_run_number, run_number, scale_factor
+        )
+        ax[1].set_title(title)
+    except ValueError as e:
+        # TODO ValueError: operands could not be broadcast together with shapes (32,31) (32,26)
+        print(e)
+
+    suptitle = "{} ({})".format(map_title, reco)
+    if subtitle:
+        suptitle = "{}\n{}".format(suptitle, subtitle)
+
+    fig.suptitle(suptitle)
+
+    directory = "plots/tracking_map_side_by_side"
+    if subdir:
+        directory = os.path.join(directory, subdir)
+    file_name = "{}_vs_{}_{}.png".format(run_number, reference_run_number, reco)
+
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    path = os.path.join(directory, file_name)
+
+    plt.savefig(path)
+    if show:
+        plt.show()
+
+
+def plot_luminosity_by_lumisections(dataframe, *args, **kwargs):
+    g = sns.FacetGrid(dataframe, col="reco", row="runtype", hue="is_bad")
+    g.map(plt.scatter, "run_number", "reference_run_number", alpha=0.7)
+
+    save_with_default_name(kwargs.get("save", False), "reference_distribution.pdf")
+
+    if kwargs.get("show", False):
+        plt.show()
+
+
+def plot_luminosity_lumisection_ratio(dataframe, *args, **kwargs):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection="3d")
+    cmap = cm.get_cmap("viridis")
+    ax.scatter(
+        dataframe.run_number,
+        dataframe.lumisections,
+        dataframe.recorded_lumi,
+        c=dataframe.is_bad,
+        cmap=cmap,
+        s=60,
+    )
+    ax.set(xlabel="Run Number", ylabel="Lumisections", zlabel="Recorded Luminosity")
+    # ax.view_init(45, 0)
+    plt.show()
