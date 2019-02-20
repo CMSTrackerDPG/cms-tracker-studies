@@ -97,4 +97,4 @@ def test_read_all_histogram_folders():
     df = load_all_histogram_folders()
 
     assert len(df) >= 975
-    assert len(df.columns) >= 60
+    assert len(df.columns) >= 77*4

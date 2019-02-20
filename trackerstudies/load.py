@@ -140,6 +140,10 @@ def read_histogram_folder(folder_name, attribute_prefix=None):
 
 
 def load_all_histogram_folders(from_pickle=True):
+    """
+    This takes a while when doing uncached.
+    """
+
     pickle_path = os.path.join("data", "histograms.pkl")
     try:
         if from_pickle:
@@ -147,6 +151,7 @@ def load_all_histogram_folders(from_pickle=True):
     except FileNotFoundError:
         pass
     prefixes = {
+        # Tracking
         "Chi2oNDF_GenTk": "Chi2oNDF",
         "NumberOfRecHitsPerTrack_GenTk": "Hits",
         "NumberOfRecHitsPerTrack_Pixel_GenTk": "Hits.Pixel",
@@ -162,6 +167,70 @@ def load_all_histogram_folders(from_pickle=True):
         "TrackEta_ImpactPoint_GenTk": "TrackEta",
         "TrackPhi_ImpactPoint_GenTk": "TrackPhi",
         "TrackPt_ImpactPoint_GenTk": "TrackPt",
+        # PixelPhase1
+        "eventrate_per_BX": "eventrate.BX",
+        "deadRocTotal": "deadRoc",
+        "num_digis_PXBarrel": "digis.PXBarrel",
+        "adc_PXBarrel": "adc.PXBarrel",
+        "num_digis_per_LumiBlock_PXBarrel": "digis.lumiblock.PXBarrel",
+        "adc_per_LumiBlock_PXBarrel": "adc.lumiblock.PXBarrel",
+        "num_digis_PXForward": "digis.PXForward",
+        "adc_PXForward": "adc.PXFoward",
+        "num_digis_per_LumiBlock_PXForward": "digis.lumiblock.PXForward",
+        "adc_per_LumiBlock_PXForward": "adc.lumiblock.PXForward",
+        "num_clusters_PXBarrel": "clusters.PXBarrel",
+        "num_clusters_PXForward": "clusters.PXForward",
+        "num_clusters_per_LumiBlock_PXBarrel": "clusters.lumiblock.PXBarrel",
+        "num_clusters_per_LumiBlock_PXForward": "clusters.lumiblock.PXForward",
+        "ntracks": "ntracks",
+        "ntracksinpixvolume": "ntracksinpixvolume",
+        "charge_PXBarrel": "charge.PXBarrel",
+        "charge_PXForward": "charge.PXForward",
+        "size_PXBarrel": "size.PXBarrel",
+        "size_PXForward": "size.PXForward",
+        "chargeInner_PXLayer_1": "charge.Inner.PXLayer_1",
+        "chargeInner_PXLayer_2": "charge.Inner.PXLayer_2",
+        "chargeInner_PXLayer_3": "charge.Inner.PXLayer_3",
+        "chargeInner_PXLayer_4": "charge.Inner.PXLayer_4",
+        "chargeOuter_PXLayer_1": "charge.Outer.PXLayer_1",
+        "chargeOuter_PXLayer_2": "charge.Outer.PXLayer_2",
+        "chargeOuter_PXLayer_3": "charge.Outer.PXLayer_3",
+        "chargeOuter_PXLayer_4": "charge.Outer.PXLayer_4",
+        "charge_PXDisk_+1": "charge.PXDisk_+1",
+        "charge_PXDisk_+2": "charge.PXDisk_+2",
+        "charge_PXDisk_+3": "charge.PXDisk_+3",
+        "charge_PXDisk_-1": "charge.PXDisk_-1",
+        "charge_PXDisk_-2": "charge.PXDisk_-2",
+        "charge_PXDisk_-3": "charge.PXDisk_-3",
+        "residual_x_PXBarrel": "residual.x.PXBarrel",
+        "residual_x_PXForward": "residual.x.PXForward",
+        "residual_y_PXBarrel": "residual.y.PXBarrel",
+        "residual_y_PXForward": "residual.y.PXForward",
+        "size_PXLayer_1": "size.PXLayer_1",
+        "size_PXLayer_2": "size.PXLayer_2",
+        "size_PXLayer_3": "size.PXLayer_3",
+        "size_PXLayer_4": "size.PXLayer_4",
+        "size_PXDisk_+1": "size.PXDisk_+1",
+        "size_PXDisk_+2": "size.PXDisk_+2",
+        "size_PXDisk_+3": "size.PXDisk_+3",
+        "size_PXDisk_-1": "size.PXDisk_-1",
+        "size_PXDisk_-2": "size.PXDisk_-2",
+        "size_PXDisk_-3": "size.PXDisk_-3",
+        # SiStrip
+        "nFEDErrors": "FEDErrors",
+        "nBadActiveChannelStatusBits": "BadActiveChannels",
+        "Summary_ClusterStoNCorr_OnTrack__TIB": "clusters.OnTrack.TIB",
+        "Summary_ClusterStoNCorr_OnTrack__TOB": "clusters.OnTrack.TOB",
+        "Summary_ClusterStoNCorr_OnTrack__TID__MINUS": "clusters.OnTrack.TID.MINUS",
+        "Summary_ClusterStoNCorr_OnTrack__TID__PLUS": "clusters.OnTrack.TID.PLUS",
+        "Summary_ClusterStoNCorr_OnTrack__TEC__MINUS": "clusters.OnTrack.TEC.MINUS",
+        "Summary_ClusterStoNCorr_OnTrack__TEC__PLUS": "clusters.OnTrack.TEC.PLUS",
+        "Summary_TotalNumberOfClusters_OffTrack__TIB": "clusters.OffTrack.TIB",
+        "Summary_TotalNumberOfClusters_OffTrack__TOB": "clusters.OffTrack.TOB",
+        "Summary_TotalNumberOfClusters_OffTrack__TID__MINUS": "clusters.OffTrack.TID.MINUS",
+        "Summary_TotalNumberOfClusters_OffTrack__TID__PLUS": "clusters.OffTrack.TID.PLUS",
+        "Summary_TotalNumberOfClusters_OffTrack__TEC__MINUS": "clusters.OffTrack.TEC.MINUS",
+        "Summary_TotalNumberOfClusters_OffTrack__TEC__PLUS": "clusters.OffTrack.TEC.PLUS",
     }
 
     dataframe = pandas.DataFrame(columns=["run_number", "reco"])
