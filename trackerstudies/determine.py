@@ -99,18 +99,20 @@ def determine_has_trigger_problem(problem_names, comment):
 def determine_is_certification_status_summary(pixel, strip, tracking):
     if all(component == "GOOD" for component in [pixel, strip, tracking]):
         return "Good"
+
     if all(component == "BAD" for component in [pixel, strip, tracking]):
         return "Bad"
 
-    stati = []
+    if all(component == "EXCLUDED" for component in [pixel, strip, tracking]):
+        return "Excluded"
 
-    if pixel != "GOOD":
-        stati.append("Pixel {}".format(pixel.capitalize()))
+    if pixel == "STANDBY" and strip == "STANDBY":
+        return "Standby".format(pixel.capitalize())
 
-    if strip != "GOOD":
-        stati.append("Strip {}".format(strip.capitalize()))
+    if pixel != "GOOD" and strip == "GOOD":
+        return "Pixel {}".format(pixel.capitalize())
 
-    if tracking != "GOOD":
-        stati.append("Tracking {}".format(tracking.capitalize()))
+    if strip != "GOOD" and pixel == "GOOD":
+        return "Strip {}".format(strip.capitalize())
 
-    return ", ".join(stati)
+    return "Pixel {}, Strip {}".format(pixel.capitalize(), strip.capitalize())

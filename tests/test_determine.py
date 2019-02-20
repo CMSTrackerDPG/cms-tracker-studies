@@ -33,7 +33,7 @@ def test_determine_runtype():
 def test_determine_is_certification_status_summary():
     assert "Good" == determine_is_certification_status_summary("GOOD", "GOOD", "GOOD")
     assert "Bad" == determine_is_certification_status_summary("BAD", "BAD", "BAD")
-    assert "Pixel Excluded, Tracking Bad" == determine_is_certification_status_summary(
+    assert "Pixel Excluded" == determine_is_certification_status_summary(
         "EXCLUDED", "GOOD", "BAD"
     )
     assert "Strip Bad" == determine_is_certification_status_summary(
