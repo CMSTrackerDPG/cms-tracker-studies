@@ -6,12 +6,14 @@ from trackerstudies.load import (
     load_oms_runs,
     load_tkdqmdoctor_runs,
     load_all_histogram_folders,
+    load_oms_fills,
 )
 from trackerstudies.merge import (
     merge_runreg_runreg,
     merge_runreg_oms,
     merge_runreg_tkdqmdoc,
     merge_runreg_histograms,
+    merge_oms_runs_oms_fills,
 )
 
 
@@ -83,3 +85,21 @@ def test_merge_runreg_histograms():
     assert runs.loc[(327564, "express"), "Seeds.detachedTriplet.mean"] == 10507.7
     assert runs.loc[(327564, "express"), "pixel"] == "GOOD"
     assert pandas.isnull(runs.loc[(314472, "online"), "Seeds.detachedTriplet.mean"])
+
+
+def test_merge_oms_runs_oms_fills():
+    oms_runs = load_oms_runs()
+    oms_fills = load_oms_fills()
+
+    n_runs = len(oms_runs)
+    n_columns = len(list(oms_runs))
+
+    assert "fill__bunches_colliding" not in oms_runs
+    assert "fill__era" not in oms_runs
+
+    oms_runs = merge_oms_runs_oms_fills(oms_runs, oms_fills)
+
+    assert len(oms_runs) == n_runs, "Number of runs did not change"
+    assert len(list(oms_runs)) > n_columns, "Number of columns increased"
+    assert "fill__bunches_colliding" in oms_runs
+    assert "fill__era" in oms_runs

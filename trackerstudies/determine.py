@@ -49,8 +49,8 @@ def determine_has_problem(problem_names, comment, problem_string):
         [problem_string in problem.lower() for problem in problem_names]
     ):
         return True
-    if not pandas.isnull(comment) and problem_string in comment.lower():
-        return True
+    # if not pandas.isnull(comment) and problem_string in comment.lower():
+    #    return True
     return False
 
 
@@ -116,3 +116,48 @@ def determine_is_certification_status_summary(pixel, strip, tracking):
         return "Strip {}".format(strip.capitalize())
 
     return "Pixel {}, Strip {}".format(pixel.capitalize(), strip.capitalize())
+
+
+def determine_bad_reason(pixel_comment, strip_comment, tracking_comment, comment):
+    possible_reasons = {
+        "timing": "timing_scan",
+        "config": "misconfiguration",
+        "cm threshold": "cm_threshold_scan",
+        "hv scan": "hv_scan",
+        "hv problem": "hv_problem",
+        "hv off": "hv_off",
+        "hv is off": "hv_off",
+        "stats too low": "low_statistics",
+        "on for only": "hv_off",
+        "on only": "hv_off",
+        "only in": "hv_off",
+        "only on": "hv_off",
+        "no hv": "hv_off",
+        "hv for tracker is off": "hv_off",
+        "hv was off": "hv_off",
+        "excluded": "excluded",
+        "emittance": "emittance_scan",
+        "scan": "misc_scan",
+        "plots empty": "empty_plots",
+        "empty plot": "empty_plots",
+        "in daq": "not_in_daq",
+        "1 ls": "low_statistics",
+        "dqm offline gui": "dqm_gui",
+        "low stat": "low_statistics",
+    }
+
+    comments = [pixel_comment, strip_comment, tracking_comment, comment]
+
+    for possible_reason_key, possible_reason_value in possible_reasons.items():
+        for c in comments:
+            if not pandas.isnull(c) and possible_reason_key in c.lower().replace(
+                "_", " "
+            ):
+                return possible_reason_value
+
+    return "miscellaneous"
+
+
+def determine_online_tracking_status(pixel, strip):
+    # TODO dont care about strip for Cosmics runs
+    return "BAD" if pixel != "GOOD" or strip != "GOOD" else "GOOD"

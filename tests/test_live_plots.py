@@ -8,6 +8,7 @@ from trackerstudies.filters import (
     exclude_commissioning,
     exclude_special,
     filter_run_number_range,
+    filter_prompt,
 )
 from trackerstudies.load import load_tracker_runs, load_tkdqmdoctor_runs
 from trackerstudies.merge import merge_runreg_tkdqmdoc
@@ -34,6 +35,7 @@ from trackerstudies.plots import (
     plot_tracking_maps_line_vs_reference,
     plot_tracking_maps_side_by_side,
     plot_luminosity_lumisection_ratio,
+    plot_histogram_pairs,
 )
 from trackerstudies.utils import load_fully_setup_tracker_runs, load_runs
 
@@ -188,3 +190,8 @@ def test_plot_tracking_maps_side_by_side():
 def test_plot_luminosity_lumis_ratio():
     runs = load_runs()
     plot_luminosity_lumisection_ratio(runs)
+
+
+def test_plot_histogram_pairs():
+    runs = load_runs().pipe(filter_collisions).pipe(filter_prompt)
+    plot_histogram_pairs(runs)

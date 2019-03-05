@@ -1,3 +1,5 @@
+import pandas
+
 from trackerstudies.utils import (
     load_fully_setup_tracker_runs,
     load_fully_setup_global_runs,
@@ -53,5 +55,19 @@ def test_load_all_workspaces_full_setup():
 
 def test_load_runs():
     runs = load_runs()
-    assert len(runs) > 3000
-    assert len(runs.columns) > 150
+    assert len(runs) > 5000
+    assert len(runs.columns) >= 436
+
+    runs.reco = pandas.Categorical(runs.reco, ["online", "express", "prompt", "rereco"])
+
+    runs = runs.sort_values(["run_number", "reco"]).reset_index()
+
+    bad_online = list(
+        runs[(runs.reco == "online") & (runs.tracking == "BAD")].run_number.unique()
+    )
+
+    runs = runs[runs.run_number.isin(bad_online)]
+    print()
+    print(bad_online)
+    print()
+    print(runs[["run_number", "reco", "runtype", "pixel", "strip", "tracking"]])

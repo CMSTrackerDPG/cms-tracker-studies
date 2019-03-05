@@ -22,3 +22,11 @@ pip install git+https://github.com/ptrstn/runregcrawlr
 pip install git+https://github.com/ptrstn/wbmcrawlr
 pip install git+https://github.com/ptrstn/twikirefs
 ```
+
+
+## Data Retrieval
+
+```bash
+wbmcrawl --runs 313052 327564
+wbmcrawl --fills 6477 7492
+```

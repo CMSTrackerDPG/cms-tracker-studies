@@ -4,7 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 
-from trackerstudies.utils import load_tracking_map_content
+from trackerstudies.utils import load_tracking_map_content, setup_pandas_display
 from .algorithms import binned_angular_correlation, most_common_scale
 from .extract import (
     extract_tracking_map_content,
@@ -408,3 +408,47 @@ def plot_luminosity_lumisection_ratio(dataframe, *args, **kwargs):
     ax.set(xlabel="Run Number", ylabel="Lumisections", zlabel="Recorded Luminosity")
     # ax.view_init(45, 0)
     plt.show()
+
+
+def plot_histogram_pairs(dataframe, *args, **kwargs):
+    import seaborn as sns
+
+    sns.set(style="ticks", color_codes=True)
+    iris = sns.load_dataset("iris")
+    g = sns.pairplot(iris, hue="species", palette="husl")
+    print()
+    print(iris)
+    plt.show()
+
+    histograms = ["Hits", "Hits.Pixel", "Hits.Strip"]
+    rms = ["{}.rms".format(h) for h in histograms]
+    df = dataframe[[*rms, "run_number"]]
+
+    setup_pandas_display()
+
+    df = df[df["Hits.rms"] > 0]
+    df = df[df["Hits.Pixel.rms"] > 0]
+    df = df[df["Hits.Strip.rms"] > 0]
+    print(df)
+    print(sorted(list(df["Hits.rms"].unique())))
+    print(sorted(list(df["Hits.Pixel.rms"].unique())))
+    print(sorted(list(df["Hits.Strip.rms"].unique())))
+    g = sns.pairplot(df)
+    plt.show()
+    """"
+    #histograms = ['Chi2oNDF', 'Hits', 'Hits.Pixel', 'Hits.Strip', 'Seeds.detachedTriplet', 'Seeds.initialStep', 'Seeds.lowPtTriplet', 'Seeds.mixedTriplet', 'Seeds.pixelLess', 'Seeds.pixelPair', 'Seeds.tobTec', 'Tracks', 'TrackEta', 'TrackPhi', 'TrackPt']
+    histograms = ['Hits', 'Hits.Pixel', 'Hits.Strip']
+
+    rms = ["{}.rms".format(h) for h in histograms]
+    mean = ["{}.rms".format(h) for h in histograms]
+    integral = ["{}.rms".format(h) for h in histograms]
+    entries = ["{}.rms".format(h) for h in histograms]
+    df = dataframe[[*mean]]
+    print()
+    setup_pandas_display()
+    df = df.tail()
+    print(df)
+    plt.plot(df["Hits.rms"], df['Hits.Pixel.rms'])
+    #sns.pairplot(df)
+    plt.show()
+    """

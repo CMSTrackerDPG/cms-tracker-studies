@@ -2,7 +2,7 @@ import pandas
 
 
 def merge_runreg_runreg(runreg_dataframe1, runreg_dataframe2):
-    return runreg_dataframe1.append(runreg_dataframe2, sort=True)
+    return runreg_dataframe1.append(runreg_dataframe2, sort=True, ignore_index=True)
 
 
 def merge_runreg_oms(runreg_dataframe, oms_dataframe):
@@ -11,6 +11,18 @@ def merge_runreg_oms(runreg_dataframe, oms_dataframe):
     return pandas.merge(
         rr, oms, how="left", left_on=["run_number"], right_on=["run_number"]
     ).reset_index()
+
+
+def merge_oms_runs_oms_fills(oms_runs_dataframe, oms_fills_dataframe, prefix="fill__"):
+    fills = oms_fills_dataframe.add_prefix(prefix)
+    fill_number_key = "{}fill_number".format(prefix)
+    return pandas.merge(
+        oms_runs_dataframe,
+        fills,
+        how="left",
+        left_on=["fill_number"],
+        right_on=[fill_number_key],
+    )
 
 
 def merge_runreg_tkdqmdoc(runreg_dataframe, tkdqmdoc_dataframe):

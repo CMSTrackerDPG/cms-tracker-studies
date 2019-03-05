@@ -15,6 +15,7 @@ from .determine import (
     determine_has_many_bad_components,
     determine_has_trigger_problem,
     determine_is_certification_status_summary,
+    determine_bad_reason,
 )
 
 
@@ -193,6 +194,16 @@ def add_status_summary(dataframe):
     dataframe.loc[:, "status_summary"] = dataframe.apply(
         lambda row: determine_is_certification_status_summary(
             row.pixel, row.strip, row.tracking
+        ),
+        axis=1,
+    )
+    return dataframe
+
+
+def add_bad_reason(dataframe):
+    dataframe.loc[dataframe.tracking == "BAD", "bad_reason"] = dataframe.apply(
+        lambda row: determine_bad_reason(
+            row.pixel_comment, row.strip_comment, row.tracking_comment, row.comment
         ),
         axis=1,
     )

@@ -21,6 +21,9 @@ from .load import (
     load_global_runs,
     load_tkdqmdoctor_problem_runs,
     load_all_histogram_folders,
+    load_online_tracker_runs,
+    load_oms_fills,
+    load_track_histograms,
 )
 from .merge import (
     merge_runreg_tkdqmdoc,
@@ -28,6 +31,7 @@ from .merge import (
     merge_runreg_runreg,
     merge_runreg_tkdqmdoc_problem_runs,
     merge_runreg_histograms,
+    merge_oms_runs_oms_fills,
 )
 from .pipes import (
     add_runtype,
@@ -38,6 +42,7 @@ from .pipes import (
     add_is_special,
     add_all_problems,
     add_status_summary,
+    add_bad_reason,
 )
 
 
@@ -210,16 +215,22 @@ def load_runs(from_pickle=True):
         pass
 
     tracker_runs = load_tracker_runs()
+    tracker_online_runs = load_online_tracker_runs()
     tkdqmdoctor_runs = load_tkdqmdoctor_runs()
     tkdqmdoctor_problem_runs = load_tkdqmdoctor_problem_runs()
     oms_runs = load_oms_runs()
+    oms_fills = load_oms_fills()
+    oms_runs = merge_oms_runs_oms_fills(oms_runs, oms_fills)
     histograms = load_all_histogram_folders()
+    track_histograms = load_track_histograms()
 
     runs = (
-        tracker_runs.pipe(merge_runreg_tkdqmdoc, tkdqmdoctor_runs)
+        tracker_runs.pipe(merge_runreg_runreg, tracker_online_runs)
+        .pipe(merge_runreg_tkdqmdoc, tkdqmdoctor_runs)
         .pipe(merge_runreg_tkdqmdoc_problem_runs, tkdqmdoctor_problem_runs)
         .pipe(merge_runreg_oms, oms_runs)
         .pipe(merge_runreg_histograms, histograms)
+        .pipe(merge_runreg_histograms, track_histograms)
         .pipe(add_runtype)
         .pipe(add_is_special)
         .pipe(add_is_commissioning)
@@ -228,9 +239,10 @@ def load_runs(from_pickle=True):
         .pipe(exclude_open)
         .pipe(add_is_bad)
         .pipe(add_is_heavy_ion)
-        .pipe(add_all_problems)
+        # .pipe(add_all_problems)
         .pipe(add_status_summary)
-    )
+        .pipe(add_bad_reason)
+    ).sort_values(by=["run_number", "reco"])
 
     # TODO .pipe(add_reference_cost)
     # TODO .pipe(add_angular_correlation_entropy)
