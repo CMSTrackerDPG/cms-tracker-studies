@@ -222,7 +222,6 @@ def load_runs(from_pickle=True):
     oms_fills = load_oms_fills()
     oms_runs = merge_oms_runs_oms_fills(oms_runs, oms_fills)
     histograms = load_all_histogram_folders()
-    track_histograms = load_track_histograms()
 
     runs = (
         tracker_runs.pipe(merge_runreg_runreg, tracker_online_runs)
@@ -230,7 +229,6 @@ def load_runs(from_pickle=True):
         .pipe(merge_runreg_tkdqmdoc_problem_runs, tkdqmdoctor_problem_runs)
         .pipe(merge_runreg_oms, oms_runs)
         .pipe(merge_runreg_histograms, histograms)
-        .pipe(merge_runreg_histograms, track_histograms)
         .pipe(add_runtype)
         .pipe(add_is_special)
         .pipe(add_is_commissioning)
