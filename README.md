@@ -9,24 +9,9 @@
 ## Installation
 
 ```bash
-pip install git+https://github.com/ptrstn/cms-tracker-studies
+pip install git+https://github.com/CMSTrackerDPG/cms-tracker-studies
 ```
 
-## Prerequisites
+## Dokumentation
 
-To retrieve the necessary data you have to install the following tools:
-
-```bash
-pip install git+https://github.com/ptrstn/dqmcrawlr
-pip install git+https://github.com/ptrstn/runregcrawlr
-pip install git+https://github.com/ptrstn/wbmcrawlr
-pip install git+https://github.com/ptrstn/twikirefs
-```
-
-
-## Data Retrieval
-
-```bash
-wbmcrawl --runs 313052 327564
-wbmcrawl --fills 6477 7492
-```
+Check out the [cms-tracker-studies-notebook](https://github.com/ptrstn/cms-tracker-studies-notebook)
