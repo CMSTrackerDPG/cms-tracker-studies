@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/ptrstn/cms-tracker-studies.svg?branch=master)](https://travis-ci.com/ptrstn/cms-tracker-studies)
+[![Build Status](https://travis-ci.com/CMSTrackerDPG/cms-tracker-studies.svg?branch=master)](https://travis-ci.com/CMSTrackerDPG/cms-tracker-studies)
 
 # CMS Tracker Studies
 
