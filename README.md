@@ -29,7 +29,7 @@ Then either copy existing data in to the data folder or retrieve all the data fr
 
 ## R plots
 
-Example R plots are available in the ```r-plots``` folder.
+Example R plots are available in the ```r``` folder.
 
 First you have to export you data in a csv format
 
